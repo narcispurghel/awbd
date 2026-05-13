@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  Usage:
+    <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('field')})}"></div>
+-->
+<div th:fragment="errors(errors)" th:if="${errors != null and !#lists.isEmpty(errors)}" class="invalid-feedback d-block">
+    <ul class="list-unstyled mb-0">
+        <li th:each="e : ${errors}" th:text="${e}">error</li>
+    </ul>
+</div>
+
+<div th:fragment="globals(name)" th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+    <ul class="mb-0">
+        <li th:each="e : ${#fields.globalErrors()}" th:text="${e}">error</li>
+    </ul>
+</div>
+</body>
+</html>

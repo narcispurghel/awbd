@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Server error', ~{::content})}">
+<section th:fragment="content" class="text-center py-5">
+    <h1 class="display-1 fw-bold text-danger">!</h1>
+    <p class="lead">Something went wrong on our side.</p>
+    <p class="text-body-secondary" th:if="${message}" th:text="${message}">details</p>
+    <a th:href="@{/}" class="btn btn-primary mt-3">Back to home</a>
+</section>
+</th:block>
+</body>
+</html>

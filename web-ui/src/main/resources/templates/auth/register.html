@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Register', ~{::content})}">
+<section th:fragment="content" class="row justify-content-center">
+    <div class="col-md-7 col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h4 mb-3">Create your account</h1>
+                <div th:replace="~{fragments/form-errors :: globals('registerForm')}"></div>
+                <form th:action="@{/register}" th:object="${registerForm}" method="post" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="firstName">First name</label>
+                            <input id="firstName" type="text" th:field="*{firstName}"
+                                   class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
+                            <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('firstName')})}"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="lastName">Last name</label>
+                            <input id="lastName" type="text" th:field="*{lastName}"
+                                   class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
+                            <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('lastName')})}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="email">Email</label>
+                            <input id="email" type="email" th:field="*{email}"
+                                   class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                            <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('email')})}"></div>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="password">Password</label>
+                            <input id="password" type="password" th:field="*{password}"
+                                   class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                            <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('password')})}"></div>
+                            <div class="form-text">At least 8 characters.</div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-4">Register</button>
+                </form>
+                <p class="text-center small text-body-secondary mt-3 mb-0">
+                    Already have an account? <a th:href="@{/login}">Log in</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+</th:block>
+</body>
+</html>

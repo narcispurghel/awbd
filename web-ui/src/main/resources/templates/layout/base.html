@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:fragment="layout(title, body)">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title th:text="${title} + ' · PAWS'">PAWS</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap-icons/font/bootstrap-icons.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/app.css}"/>
+</head>
+<body class="d-flex flex-column min-vh-100 bg-body-tertiary">
+<header th:replace="~{fragments/nav :: nav}"></header>
+
+<main class="container py-4 flex-grow-1">
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+    <th:block th:replace="${body}"></th:block>
+</main>
+
+<footer class="border-top py-3 text-center text-body-secondary small">
+    <span>&copy; PAWS · Animal Adoption Platform</span>
+</footer>
+
+<script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

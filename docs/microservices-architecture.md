@@ -7,6 +7,7 @@
 | `config-server` | 8888 | Centralized Spring Cloud Config — all services pull config from here          |
 | `eureka-server` | 8761 | Service discovery — all services register here                                |
 | `api-gateway`   | 8080 | Spring Cloud Gateway — single entry point, handles routing and JWT validation |
+| `web-ui`        | 8090 | Thymeleaf web client (auth, profile, account settings) — calls api-gateway     |
 
 ## Business Services
 

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Edit profile', ~{::content})}">
+<section th:fragment="content">
+    <h1 class="h3 mb-3">Edit profile</h1>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div th:replace="~{fragments/form-errors :: globals('profileForm')}"></div>
+            <form th:action="@{/profile/edit}" th:object="${profileForm}" method="post" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="firstName">First name</label>
+                        <input id="firstName" type="text" th:field="*{firstName}"
+                               class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('firstName')})}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="lastName">Last name</label>
+                        <input id="lastName" type="text" th:field="*{lastName}"
+                               class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('lastName')})}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="phone">Phone (E.164)</label>
+                        <input id="phone" type="tel" th:field="*{phone}" placeholder="+40712345678"
+                               class="form-control" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"/>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('phone')})}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="city">City</label>
+                        <input id="city" type="text" th:field="*{city}"
+                               class="form-control" th:classappend="${#fields.hasErrors('city')} ? 'is-invalid'"/>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('city')})}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="houseType">House type</label>
+                        <select id="houseType" th:field="*{houseType}"
+                                class="form-select" th:classappend="${#fields.hasErrors('houseType')} ? 'is-invalid'">
+                            <option value="APARTMENT">Apartment</option>
+                            <option value="HOUSE">House</option>
+                            <option value="STUDIO">Studio</option>
+                            <option value="VILLA">Villa</option>
+                        </select>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('houseType')})}"></div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="experienceWithPets">Experience (years)</label>
+                        <input id="experienceWithPets" type="number" min="0" th:field="*{experienceWithPets}"
+                               class="form-control" th:classappend="${#fields.hasErrors('experienceWithPets')} ? 'is-invalid'"/>
+                        <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('experienceWithPets')})}"></div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input id="hasYard" type="checkbox" th:field="*{hasYard}" class="form-check-input"/>
+                            <label for="hasYard" class="form-check-label">I have a yard</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2 mt-4">
+                    <a th:href="@{/profile}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+</th:block>
+</body>
+</html>

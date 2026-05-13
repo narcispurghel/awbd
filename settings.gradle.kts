@@ -5,4 +5,5 @@ include(
     "eureka-server",
     "api-gateway",
     "user-service",
+    "web-ui",
 )

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Profile', ~{::content})}">
+<section th:fragment="content">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="h3 mb-0">My profile</h1>
+        <a th:href="@{/profile/edit}" class="btn btn-primary">
+            <i class="bi bi-pencil me-1"></i>Edit
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Email</dt>
+                <dd class="col-sm-8" th:text="${user.email()}">user@example.com</dd>
+
+                <dt class="col-sm-4">Role</dt>
+                <dd class="col-sm-8" th:text="${user.role()}">USER</dd>
+
+                <dt class="col-sm-4">Status</dt>
+                <dd class="col-sm-8">
+                    <span class="badge text-bg-success" th:if="${user.active()}">Active</span>
+                    <span class="badge text-bg-secondary" th:unless="${user.active()}">Inactive</span>
+                </dd>
+
+                <dt class="col-sm-4">Member since</dt>
+                <dd class="col-sm-8" th:text="${user.createdAt()}">—</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="card shadow-sm mt-3" th:if="${user.profile() != null}">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>Adopter profile</span>
+            <span class="badge text-bg-success" th:if="${user.profile().verifiedStatus()}">
+                <i class="bi bi-patch-check me-1"></i>Verified
+            </span>
+            <span class="badge text-bg-warning" th:unless="${user.profile().verifiedStatus()}">Pending</span>
+        </div>
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-4">Name</dt>
+                <dd class="col-sm-8"
+                    th:text="${user.profile().firstName() + ' ' + user.profile().lastName()}">—</dd>
+
+                <dt class="col-sm-4">Phone</dt>
+                <dd class="col-sm-8" th:text="${user.profile().phone() ?: '—'}">—</dd>
+
+                <dt class="col-sm-4">City</dt>
+                <dd class="col-sm-8" th:text="${user.profile().city() ?: '—'}">—</dd>
+
+                <dt class="col-sm-4">House type</dt>
+                <dd class="col-sm-8" th:text="${user.profile().houseType()}">—</dd>
+
+                <dt class="col-sm-4">Has yard</dt>
+                <dd class="col-sm-8" th:text="${user.profile().hasYard()} ? 'Yes' : 'No'">—</dd>
+
+                <dt class="col-sm-4">Experience with pets</dt>
+                <dd class="col-sm-8">
+                    <span th:text="${user.profile().experienceWithPets()}">0</span> year(s)
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-3" th:if="${user.profile() == null}">
+        <i class="bi bi-info-circle me-1"></i>You haven't filled out your adopter profile yet.
+        <a th:href="@{/profile/edit}" class="alert-link">Fill it in now</a>.
+    </div>
+</section>
+</th:block>
+</body>
+</html>

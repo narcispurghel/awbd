@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Home', ~{::content})}">
+<section th:fragment="content" class="text-center py-5">
+    <h1 class="display-4 fw-semibold">Find a friend for life</h1>
+    <p class="lead text-body-secondary">
+        PAWS connects loving adopters with shelters across Romania and Moldova.
+    </p>
+    <div class="d-flex justify-content-center gap-2 mt-4">
+        <a th:href="@{/register}" class="btn btn-primary btn-lg">
+            <i class="bi bi-person-plus me-1"></i>Create an account
+        </a>
+        <a th:href="@{/login}" class="btn btn-outline-secondary btn-lg">
+            Log in
+        </a>
+    </div>
+</section>
+</th:block>
+</body>
+</html>
