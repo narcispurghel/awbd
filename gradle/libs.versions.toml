@@ -39,6 +39,7 @@ thymeleaf-extras-springsecurity = { module = "org.thymeleaf.extras:thymeleaf-ext
 webjars-locator = { module = "org.webjars:webjars-locator-lite", version.ref = "webjars-locator" }
 webjars-bootstrap = { module = "org.webjars:bootstrap", version.ref = "webjars-bootstrap" }
 webjars-bootstrap-icons = { module = "org.webjars.npm:bootstrap-icons", version.ref = "webjars-bootstrap-icons" }
+spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
