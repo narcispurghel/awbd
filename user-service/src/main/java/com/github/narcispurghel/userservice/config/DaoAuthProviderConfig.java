@@ -9,21 +9,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration(proxyBeanMethods = false)
 class DaoAuthProviderConfig {
 
-    private final UserDetailsService userDetailsService;
-    private final PasswordEncoder passwordEncoder;
+  private final UserDetailsService userDetailsService;
+  private final PasswordEncoder passwordEncoder;
 
-    public DaoAuthProviderConfig(
-        UserDetailsService userDetailsService,
-        PasswordEncoder passwordEncoder
-    ) {
-        this.userDetailsService = userDetailsService;
-        this.passwordEncoder = passwordEncoder;
-    }
+  public DaoAuthProviderConfig(
+    UserDetailsService userDetailsService,
+    PasswordEncoder passwordEncoder
+  ) {
+    this.userDetailsService = userDetailsService;
+    this.passwordEncoder = passwordEncoder;
+  }
 
-    @Bean
-    DaoAuthenticationProvider authenticationProvider() {
-        var provider = new DaoAuthenticationProvider(userDetailsService);
-        provider.setPasswordEncoder(passwordEncoder);
-        return provider;
-    }
+  @Bean
+  DaoAuthenticationProvider authenticationProvider() {
+    var provider = new DaoAuthenticationProvider(userDetailsService);
+    provider.setPasswordEncoder(passwordEncoder);
+    return provider;
+  }
 }

@@ -8,9 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration(proxyBeanMethods = false)
 public class PasswordEncoderConfig {
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        // 8 encoder strength to balance security with time consumption
-        return new BCryptPasswordEncoder(8);
-    }
+  @Bean
+  PasswordEncoder passwordEncoder() {
+    // 8 encoder strength to balance security with time consumption
+    return new BCryptPasswordEncoder(8);
+  }
 }
