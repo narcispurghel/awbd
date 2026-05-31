@@ -1,7 +1,7 @@
 plugins {
     java
-    id("org.springframework.boot") version "4.0.6"
-    id("io.spring.dependency-management") version "1.1.7"
+    alias(libs.plugins.spring.boot)
+    alias(libs.plugins.spring.dependency.management)
 }
 
 group = "com.github.narcispurghel"
@@ -18,13 +18,21 @@ repositories {
     mavenCentral()
 }
 
-extra["springCloudVersion"] = "2025.1.1"
+extra["springCloudVersion"] = libs.versions.spring.cloud.get()
 
 dependencies {
+    implementation(project(":common"))
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    implementation(libs.spring.data.redis)
+    implementation(libs.dotenv.java)
+    testImplementation(libs.spring.boot.webmvc.test)
+    testImplementation(libs.spring.boot.testcontainers)
+    testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation(libs.jjwt.api)
+    testRuntimeOnly(libs.jjwt.impl)
+    testRuntimeOnly(libs.jjwt.jackson)
+    testRuntimeOnly(libs.junit.platform.launcher)
 }
 
 dependencyManagement {
@@ -33,6 +41,6 @@ dependencyManagement {
     }
 }
 
-tasks.withType<Test> {
+tasks.named<Test>("test") {
     useJUnitPlatform()
 }
