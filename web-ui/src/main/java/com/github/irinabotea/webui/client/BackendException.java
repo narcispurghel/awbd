@@ -9,29 +9,33 @@ import org.jspecify.annotations.Nullable;
  */
 public class BackendException extends RuntimeException {
 
-    private final int status;
-    private final List<BackendDtos.FieldError> fieldErrors;
+  private final int status;
+  private final List<BackendDtos.FieldError> fieldErrors;
 
-    public BackendException(int status, @Nullable String message, @Nullable List<BackendDtos.FieldError> fieldErrors) {
-        super(message == null ? ("Backend error " + status) : message);
-        this.status = status;
-        this.fieldErrors = fieldErrors == null ? List.of() : fieldErrors;
-    }
+  public BackendException(
+    int status,
+    @Nullable String message,
+    @Nullable List<BackendDtos.FieldError> fieldErrors
+  ) {
+    super(message == null ? ("Backend error " + status) : message);
+    this.status = status;
+    this.fieldErrors = fieldErrors == null ? List.of() : fieldErrors;
+  }
 
-    public int status() {
-        return status;
-    }
+  public int status() {
+    return status;
+  }
 
-    public List<BackendDtos.FieldError> fieldErrors() {
-        return fieldErrors;
-    }
+  public List<BackendDtos.FieldError> fieldErrors() {
+    return fieldErrors;
+  }
 
-    public String safeMessage() {
-        String m = getMessage();
-        return m == null ? ("Backend error " + status) : m;
-    }
+  public String safeMessage() {
+    String m = getMessage();
+    return m == null ? ("Backend error " + status) : m;
+  }
 
-    public boolean isUnauthorized() {
-        return status == 401 || status == 403;
-    }
+  public boolean isUnauthorized() {
+    return status == 401 || status == 403;
+  }
 }

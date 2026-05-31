@@ -25,6 +25,7 @@ extra["springCloudVersion"] =
         .get()
 
 dependencies {
+    implementation(project(":common"))
     implementation(libs.spring.boot.webmvc)
     implementation(libs.spring.boot.thymeleaf)
     implementation(libs.spring.boot.security)

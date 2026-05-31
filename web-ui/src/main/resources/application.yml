@@ -1,13 +1,13 @@
 spring:
   application:
     name: web-ui
+  output:
+    ansi:
+      enabled: always
   thymeleaf:
     cache: false
 server:
   port: 8090
-  error:
-    whitelabel:
-      enabled: false
 eureka:
   client:
     service-url:
@@ -16,9 +16,6 @@ app:
   backend:
     base-url: http://localhost:8080
   jwt:
-    # NOTE: For local dev only. Override via environment in real deployments.
-    # Must be at least 256 bits (32 bytes) for HS256.
-    secret: ${JWT_SECRET:change-me-change-me-change-me-change-me-32b}
+    secret: ${JWT_SECRET}
     cookie-name: AUTH_TOKEN
-    # Set to true when serving over HTTPS in production.
     cookie-secure: false

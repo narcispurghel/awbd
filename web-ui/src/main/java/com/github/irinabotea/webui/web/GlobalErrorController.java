@@ -18,33 +18,33 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/error")
 class ErrorPagesController {
 
-    @GetMapping("/access-denied")
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public String accessDenied() {
-        return "error/access-denied";
-    }
+  @GetMapping("/access-denied")
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public String accessDenied() {
+    return "error/access-denied";
+  }
 }
 
 /** Translates BackendException into friendly pages and clears stale auth on 401. */
 @ControllerAdvice
 class GlobalExceptionHandler {
 
-    private final JwtCookieService cookies;
+  private final JwtCookieService cookies;
 
-    GlobalExceptionHandler(JwtCookieService cookies) {
-        this.cookies = cookies;
-    }
+  GlobalExceptionHandler(JwtCookieService cookies) {
+    this.cookies = cookies;
+  }
 
-    @ExceptionHandler(BackendException.class)
-    public ModelAndView onBackend(BackendException ex, HttpServletResponse response, Model model) {
-        if (ex.isUnauthorized()) {
-            cookies.clearCookie(response);
-            SecurityContextHolder.clearContext();
-            return new ModelAndView("redirect:/login");
-        }
-        ModelAndView mv = new ModelAndView("error/500");
-        mv.setStatus(HttpStatus.BAD_GATEWAY);
-        mv.addObject("message", ex.getMessage());
-        return mv;
+  @ExceptionHandler(BackendException.class)
+  public ModelAndView onBackend(BackendException ex, HttpServletResponse response, Model model) {
+    if (ex.isUnauthorized()) {
+      cookies.clearCookie(response);
+      SecurityContextHolder.clearContext();
+      return new ModelAndView("redirect:/login");
     }
+    ModelAndView mv = new ModelAndView("error/500");
+    mv.setStatus(HttpStatus.BAD_GATEWAY);
+    mv.addObject("message", ex.getMessage());
+    return mv;
+  }
 }
