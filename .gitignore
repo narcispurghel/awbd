@@ -41,3 +41,4 @@ docs/Proiect_Aplicatii_Web_Microservicii.docx
 
 *.env
 .cursor
+.DS_Store
