@@ -1,3 +1,6 @@
 spring:
   application:
     name: awdb
+  output:
+    ansi:
+      enabled: always

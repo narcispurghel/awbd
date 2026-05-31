@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class AwdbApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(AwdbApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(AwdbApplication.class, args);
+  }
 }
