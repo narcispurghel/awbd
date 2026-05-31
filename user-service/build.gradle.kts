@@ -23,19 +23,26 @@ extra["springCloudVersion"] =
         .get()
 
 dependencies {
+    implementation(project(":common"))
     implementation(libs.spring.boot.data.jpa)
     implementation(libs.spring.boot.validation)
     implementation(libs.spring.boot.webmvc)
     implementation(libs.spring.cloud.eureka.client)
     implementation(libs.dotenv.java)
     implementation(libs.spring.boot.security)
+    implementation(libs.jjwt.api)
+    implementation(libs.jjwt.impl)
+    implementation(libs.jjwt.jackson)
     runtimeOnly(libs.postgresql)
+    implementation(libs.spring.data.redis)
     testImplementation(libs.spring.boot.data.jpa.test)
     implementation(libs.spring.boot.security.test)
     testImplementation(libs.spring.boot.validation.test)
     testImplementation(libs.spring.boot.webmvc.test)
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit.jupiter)
+    testImplementation("org.testcontainers:postgresql:1.21.4")
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 

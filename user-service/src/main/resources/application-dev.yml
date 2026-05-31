@@ -1,3 +1,4 @@
+# Local dev settings — loaded from repo-root .env via DotenvLoader (see common module).
 spring:
   datasource:
     url: ${DB_URL}
@@ -5,7 +6,11 @@ spring:
     password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      dll-auto: update
+      ddl-auto: update
     show-sql: true
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 cors:
-  allowed-origins: http://localhost:8087
+  allowed-origins: http://localhost:8090
