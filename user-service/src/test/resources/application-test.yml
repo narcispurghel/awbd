@@ -1,0 +1,15 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+  cloud:
+    discovery:
+      enabled: false
+eureka:
+  client:
+    enabled: false
+jwt:
+  secret: test-secret-test-secret-test-secret-test-secre
+cors:
+  allowed-origins: http://localhost:8090
