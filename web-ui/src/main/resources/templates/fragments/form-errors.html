@@ -11,7 +11,7 @@
     </ul>
 </div>
 
-<div th:fragment="globals(name)" th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
+<div th:fragment="globals" th:if="${#fields.hasGlobalErrors()}" class="alert alert-danger">
     <ul class="mb-0">
         <li th:each="e : ${#fields.globalErrors()}" th:text="${e}">error</li>
     </ul>

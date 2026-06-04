@@ -7,8 +7,8 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <div th:replace="~{fragments/form-errors :: globals('profileForm')}"></div>
             <form th:action="@{/profile/edit}" th:object="${profileForm}" method="post" novalidate>
+                <div th:replace="~{fragments/form-errors :: globals}"></div>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label" for="firstName">First name</label>

@@ -7,8 +7,8 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 mb-3">Create your account</h1>
-                <div th:replace="~{fragments/form-errors :: globals('registerForm')}"></div>
                 <form th:action="@{/register}" th:object="${registerForm}" method="post" novalidate>
+                    <div th:replace="~{fragments/form-errors :: globals}"></div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="firstName">First name</label>

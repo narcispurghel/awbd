@@ -7,8 +7,8 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 mb-3">Log in</h1>
-                <div th:replace="~{fragments/form-errors :: globals('loginForm')}"></div>
                 <form th:action="@{/login}" th:object="${loginForm}" method="post" novalidate>
+                    <div th:replace="~{fragments/form-errors :: globals}"></div>
                     <input type="hidden" name="redirect" th:value="${redirect}"/>
                     <div class="mb-3">
                         <label class="form-label" for="email">Email</label>
