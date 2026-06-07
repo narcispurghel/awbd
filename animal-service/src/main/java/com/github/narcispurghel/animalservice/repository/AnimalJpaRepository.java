@@ -1,0 +1,52 @@
+package com.github.narcispurghel.animalservice.repository;
+
+import com.github.narcispurghel.animalservice.entity.Animal;
+import com.github.narcispurghel.animalservice.entity.AnimalStatus;
+import java.util.List;
+import java.util.UUID;
+import org.jspecify.annotations.Nullable;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AnimalJpaRepository extends JpaRepository<Animal, UUID> {
+  List<Animal> findAllByOrderByNameAsc();
+  List<Animal> findByStatusOrderByNameAsc(AnimalStatus status);
+  List<Animal> findBySpeciesIdOrderByNameAsc(UUID speciesId);
+  List<Animal> findByShelterIdOrderByNameAsc(UUID shelterId);
+  List<Animal> findByStatusAndSpeciesIdOrderByNameAsc(AnimalStatus status, UUID speciesId);
+  List<Animal> findByStatusAndShelterIdOrderByNameAsc(AnimalStatus status, UUID shelterId);
+  List<Animal> findBySpeciesIdAndShelterIdOrderByNameAsc(UUID speciesId, UUID shelterId);
+  List<Animal> findByStatusAndSpeciesIdAndShelterIdOrderByNameAsc(
+    AnimalStatus status,
+    UUID speciesId,
+    UUID shelterId
+  );
+
+  default List<Animal> filter(
+    @Nullable AnimalStatus status,
+    @Nullable UUID speciesId,
+    @Nullable UUID shelterId
+  ) {
+    if (status != null && speciesId != null && shelterId != null) {
+      return findByStatusAndSpeciesIdAndShelterIdOrderByNameAsc(status, speciesId, shelterId);
+    }
+    if (status != null && speciesId != null) {
+      return findByStatusAndSpeciesIdOrderByNameAsc(status, speciesId);
+    }
+    if (status != null && shelterId != null) {
+      return findByStatusAndShelterIdOrderByNameAsc(status, shelterId);
+    }
+    if (speciesId != null && shelterId != null) {
+      return findBySpeciesIdAndShelterIdOrderByNameAsc(speciesId, shelterId);
+    }
+    if (status != null) {
+      return findByStatusOrderByNameAsc(status);
+    }
+    if (speciesId != null) {
+      return findBySpeciesIdOrderByNameAsc(speciesId);
+    }
+    if (shelterId != null) {
+      return findByShelterIdOrderByNameAsc(shelterId);
+    }
+    return findAllByOrderByNameAsc();
+  }
+}

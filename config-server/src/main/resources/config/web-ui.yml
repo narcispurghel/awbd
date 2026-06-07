@@ -1,0 +1,8 @@
+app:
+  backend:
+    base-url: http://localhost:8080
+  jwt:
+    cookie-name: AUTH_TOKEN
+    cookie-secure: false
+server:
+  port: 8090

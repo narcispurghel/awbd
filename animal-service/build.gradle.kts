@@ -6,7 +6,7 @@ plugins {
 
 group = "com.github.narcispurghel"
 version = "0.0.1-SNAPSHOT"
-description = "user-service"
+description = "animal-service"
 
 java {
     toolchain {
@@ -24,22 +24,17 @@ extra["springCloudVersion"] =
 
 dependencies {
     implementation(project(":common"))
-    implementation(libs.spring.cloud.config.client)
     implementation(libs.spring.boot.data.jpa)
     implementation(libs.spring.boot.validation)
     implementation(libs.spring.boot.webmvc)
+    implementation(libs.spring.boot.security)
     implementation(libs.spring.cloud.eureka.client)
     implementation(libs.dotenv.java)
-    implementation(libs.spring.boot.security)
-    implementation(libs.jjwt.api)
-    implementation(libs.jjwt.impl)
-    implementation(libs.jjwt.jackson)
     runtimeOnly(libs.postgresql)
-    implementation(libs.spring.data.redis)
     testImplementation(libs.spring.boot.data.jpa.test)
-    implementation(libs.spring.boot.security.test)
     testImplementation(libs.spring.boot.validation.test)
     testImplementation(libs.spring.boot.webmvc.test)
+    testImplementation(libs.spring.boot.security.test)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit.jupiter)
