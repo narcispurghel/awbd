@@ -23,6 +23,10 @@ spring:
               uri: lb://user-service
               predicates:
                 - Path=/api/v1/auth/**,/api/v1/users/**
+            - id: adoption-service-api
+              uri: lb://adoption-service
+              predicates:
+                - Path=/api/v1/adoptions/**
       discovery:
         locator:
           enabled: true
