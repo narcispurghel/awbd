@@ -6,6 +6,7 @@ include(
     "eureka-server",
     "api-gateway",
     "animal-service",
+    "adoption-service",
     "user-service",
     "web-ui",
 )
