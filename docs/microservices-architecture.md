@@ -2,12 +2,13 @@
 
 ## Baseline Today
 
-The repository currently implements the platform foundation plus two real business services:
+The repository currently implements the platform foundation plus three real business services:
 
 - `common`
 - `config-server`
 - `eureka-server`
 - `api-gateway`
+- `adoption-service`
 - `animal-service`
 - `user-service`
 - `web-ui`
@@ -18,7 +19,8 @@ The current runtime flow is:
 2. `web-ui` calls `api-gateway`.
 3. `api-gateway` validates JWTs and forwards identity headers.
 4. `animal-service` handles animal catalog, shelter, and taxonomy APIs.
-5. `user-service` handles auth plus adopter account/profile operations.
+5. `adoption-service` handles adoption-request lifecycle APIs.
+6. `user-service` handles auth plus adopter account/profile operations.
 
 ## Implemented Modules
 
@@ -28,6 +30,7 @@ The current runtime flow is:
 | `config-server` | 8888 | Spring Cloud Config service for local and service-specific YAML profiles   |
 | `eureka-server` | 8761 | Service discovery                                                         |
 | `api-gateway`   | 8080 | Single entry point, routing, JWT validation, identity-header forwarding    |
+| `adoption-service` | 8083 | Adoption-request lifecycle APIs                                           |
 | `animal-service`| 8082 | Animal catalog, shelter, species, breed, and medical record APIs          |
 | `user-service`  | 8081 | Authentication, user account, and adopter profile APIs                    |
 | `web-ui`        | 8090 | Thymeleaf web client for auth, profile, and account settings              |
@@ -36,7 +39,6 @@ The current runtime flow is:
 
 | Service                | Port | Status / Intended Responsibility                                          |
 |------------------------|------|---------------------------------------------------------------------------|
-| `adoption-service`     | 8083 | Planned adoption-request lifecycle APIs                                   |
 | `notification-service` | 8084 | Planned event consumer for adoption notifications                         |
 
 ## Communication
@@ -59,6 +61,8 @@ awdb/
 ├── config-server/
 ├── eureka-server/
 ├── api-gateway/
+├── adoption-service/
+├── animal-service/
 ├── user-service/
 ├── web-ui/
 ├── build.gradle.kts
@@ -69,7 +73,6 @@ awdb/
 
 The next platform phases are:
 
-1. Add `adoption-service`
-2. Add `notification-service`
-3. Introduce async messaging for adoption lifecycle events
-4. Add resilience patterns where real remote calls exist
+1. Add `notification-service`
+2. Introduce async messaging for adoption lifecycle events
+3. Add resilience patterns where real remote calls exist
