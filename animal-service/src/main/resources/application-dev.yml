@@ -1,0 +1,12 @@
+# Local dev settings — loaded from repo-root .env via DotenvLoader (see common module).
+spring:
+  datasource:
+    url: ${DB_ANIMALS_URL:${DB_URL}}
+    username: ${DB_ANIMALS_USER:${DB_USER}}
+    password: ${DB_ANIMALS_PASSWORD:${DB_PASSWORD}}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+cors:
+  allowed-origins: http://localhost:8090
