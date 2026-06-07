@@ -8,5 +8,6 @@ include(
     "animal-service",
     "adoption-service",
     "user-service",
+    "notification-service",
     "web-ui",
 )

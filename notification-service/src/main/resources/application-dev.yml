@@ -1,0 +1,10 @@
+# Local dev settings - loaded from repo-root .env via DotenvLoader (see common module).
+spring:
+  rabbitmq:
+    host: ${RABBITMQ_HOST}
+    port: ${RABBITMQ_PORT}
+    username: ${RABBITMQ_USER}
+    password: ${RABBITMQ_PASSWORD}
+notification:
+  messaging:
+    enabled: true
