@@ -25,6 +25,7 @@ extra["springCloudVersion"] =
 dependencies {
     implementation(project(":common"))
     implementation(libs.spring.cloud.config.client)
+    implementation(libs.spring.boot.amqp)
     implementation(libs.spring.boot.data.jpa)
     implementation(libs.spring.boot.validation)
     implementation(libs.spring.boot.webmvc)
@@ -40,6 +41,7 @@ dependencies {
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit.jupiter)
     testImplementation("org.testcontainers:postgresql:1.21.4")
+    testImplementation(libs.testcontainers.rabbitmq)
     testRuntimeOnly(libs.junit.platform.launcher)
 }
 
