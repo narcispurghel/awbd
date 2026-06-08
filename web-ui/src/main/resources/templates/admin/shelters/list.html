@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin · Shelters', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Shelters</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="h3 mb-0">Shelters</h1>
+        <a th:href="@{/admin/shelters/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Add shelter
+        </a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(shelters)}" class="alert alert-light border text-center mb-0">
+        No shelters yet. Click <strong>Add shelter</strong> to create the first one.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(shelters)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>City</th>
+                    <th>Country</th>
+                    <th>Contact email</th>
+                    <th>Phone</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="s : ${shelters}">
+                    <td th:text="${s.name}">Name</td>
+                    <td th:text="${s.city}">City</td>
+                    <td th:text="${s.countryCode}">Country</td>
+                    <td th:text="${s.contactEmail}">email@example.com</td>
+                    <td th:text="${s.contactPhone} ?: '—'">Phone</td>
+                    <td class="text-end">
+                        <a th:href="@{/admin/shelters/{id}/edit(id=${s.id})}"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

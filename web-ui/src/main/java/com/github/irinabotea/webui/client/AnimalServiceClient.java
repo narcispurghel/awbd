@@ -50,4 +50,19 @@ public class AnimalServiceClient {
   public List<BackendDtos.AnimalDtos.ShelterView> shelters() {
     return http.get("/api/v1/shelters", SHELTER_LIST);
   }
+
+  public BackendDtos.AnimalDtos.@Nullable ShelterView findShelter(UUID id) {
+    for (BackendDtos.AnimalDtos.ShelterView s : shelters()) {
+      if (id.equals(s.id())) return s;
+    }
+    return null;
+  }
+
+  public BackendDtos.AnimalDtos.ShelterView createShelter(BackendDtos.AnimalDtos.UpsertShelterRequest body) {
+    return http.post("/api/v1/shelters", body, BackendDtos.AnimalDtos.ShelterView.class);
+  }
+
+  public BackendDtos.AnimalDtos.ShelterView updateShelter(UUID id, BackendDtos.AnimalDtos.UpsertShelterRequest body) {
+    return http.put("/api/v1/shelters/" + id, body, BackendDtos.AnimalDtos.ShelterView.class);
+  }
 }
