@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin', ~{::content})}">
+<section th:fragment="content">
+
+    <h1 class="h3 mb-4">
+        <i class="bi bi-shield-lock me-2"></i>Admin dashboard
+    </h1>
+
+    <div class="row g-3">
+
+        <div class="col-md-6 col-lg-4">
+            <a th:href="@{/admin/shelters}" class="card h-100 text-decoration-none text-body shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-house-heart me-2 text-primary"></i>Shelters
+                    </h5>
+                    <p class="card-text text-body-secondary mb-0">
+                        Add, edit, and review partner shelters.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a th:href="@{/admin/species}" class="card h-100 text-decoration-none text-body shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-tag me-2 text-primary"></i>Species
+                    </h5>
+                    <p class="card-text text-body-secondary mb-0">
+                        Manage the species taxonomy.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a th:href="@{/admin/breeds}" class="card h-100 text-decoration-none text-body shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-tags me-2 text-primary"></i>Breeds
+                    </h5>
+                    <p class="card-text text-body-secondary mb-0">
+                        Manage breeds within each species.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a th:href="@{/admin/animals/new}" class="card h-100 text-decoration-none text-body shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-plus-circle me-2 text-primary"></i>Add animal
+                    </h5>
+                    <p class="card-text text-body-secondary mb-0">
+                        Register a new animal in a shelter.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-4">
+            <a th:href="@{/admin/adoptions}" class="card h-100 text-decoration-none text-body shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-clipboard-check me-2 text-primary"></i>Adoption requests
+                    </h5>
+                    <p class="card-text text-body-secondary mb-0">
+                        Review and approve pending adoption requests.
+                    </p>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

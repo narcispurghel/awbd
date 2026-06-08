@@ -40,6 +40,8 @@ public class SecurityConfig {
             "/favicon.ico"
           )
           .permitAll()
+          .requestMatchers("/admin/**")
+          .hasRole("ADMIN")
           .anyRequest()
           .authenticated()
       )

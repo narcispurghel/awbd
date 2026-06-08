@@ -19,9 +19,19 @@
                     <a class="nav-link disabled" aria-disabled="true" tabindex="-1" href="#"
                        title="Coming soon">My adoptions</a>
                 </li>
-                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                    <a class="nav-link disabled" aria-disabled="true" tabindex="-1" href="#"
-                       title="Coming soon">Admin</a>
+                <li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#">
+                        <i class="bi bi-shield-lock me-1"></i>Admin
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" th:href="@{/admin}"><i class="bi bi-grid me-1"></i>Dashboard</a></li>
+                        <li><hr class="dropdown-divider"/></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/shelters}">Shelters</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/species}">Species</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/breeds}">Breeds</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/animals/new}">Add animal</a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/adoptions}">Adoption requests</a></li>
+                    </ul>
                 </li>
             </ul>
             <ul class="navbar-nav ms-auto align-items-md-center gap-md-2">
