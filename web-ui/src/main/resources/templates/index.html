@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <body>
 <th:block th:replace="~{layout/base :: layout('Home', ~{::content})}">
 <section th:fragment="content" class="text-center py-5">
@@ -7,13 +8,28 @@
     <p class="lead text-body-secondary">
         PAWS connects loving adopters with shelters across Romania and Moldova.
     </p>
-    <div class="d-flex justify-content-center gap-2 mt-4">
+
+    <div sec:authorize="!isAuthenticated()" class="d-flex justify-content-center gap-2 mt-4">
         <a th:href="@{/register}" class="btn btn-primary btn-lg">
             <i class="bi bi-person-plus me-1"></i>Create an account
         </a>
         <a th:href="@{/login}" class="btn btn-outline-secondary btn-lg">
             Log in
         </a>
+    </div>
+
+    <div sec:authorize="isAuthenticated()" class="mt-4">
+        <p class="h5 text-body-secondary mb-4">
+            Welcome back, <span sec:authentication="name">user</span>.
+        </p>
+        <div class="d-flex justify-content-center gap-2">
+            <a th:href="@{/profile}" class="btn btn-primary btn-lg">
+                <i class="bi bi-person me-1"></i>My profile
+            </a>
+            <a th:href="@{/account}" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-gear me-1"></i>Account settings
+            </a>
+        </div>
     </div>
 </section>
 </th:block>
