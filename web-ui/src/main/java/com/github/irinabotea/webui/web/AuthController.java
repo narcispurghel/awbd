@@ -9,7 +9,6 @@ import com.github.irinabotea.webui.web.form.RegisterForm;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.jspecify.annotations.Nullable;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -105,17 +104,5 @@ public class AuthController {
       }
       return "auth/register";
     }
-  }
-
-  @PostMapping("/logout")
-  public String logout(HttpServletResponse response) {
-    try {
-      client.logout();
-    } catch (BackendException ignored) {
-      // Clear local session even if backend logout fails.
-    }
-    cookies.clearCookie(response);
-    SecurityContextHolder.clearContext();
-    return "redirect:/";
   }
 }

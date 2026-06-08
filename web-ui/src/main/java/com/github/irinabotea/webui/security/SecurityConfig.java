@@ -12,9 +12,14 @@ import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 public class SecurityConfig {
 
   private final JwtCookieAuthenticationFilter jwtFilter;
+  private final BackendLogoutHandler backendLogoutHandler;
 
-  public SecurityConfig(JwtCookieAuthenticationFilter jwtFilter) {
+  public SecurityConfig(
+    JwtCookieAuthenticationFilter jwtFilter,
+    BackendLogoutHandler backendLogoutHandler
+  ) {
     this.jwtFilter = jwtFilter;
+    this.backendLogoutHandler = backendLogoutHandler;
   }
 
   @Bean
@@ -40,7 +45,16 @@ public class SecurityConfig {
       )
       .formLogin(form -> form.disable())
       .httpBasic(basic -> basic.disable())
-      .logout(l -> l.disable())
+      .logout(l ->
+        l
+          .logoutUrl("/logout")
+          .addLogoutHandler(backendLogoutHandler)
+          .invalidateHttpSession(true)
+          .clearAuthentication(true)
+          .deleteCookies("AUTH_TOKEN", "JSESSIONID", "XSRF-TOKEN")
+          .logoutSuccessUrl("/login?logout")
+          .permitAll()
+      )
       .exceptionHandling(eh ->
         eh
           .accessDeniedPage("/error/access-denied")
