@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Animals', ~{::content})}">
+<section th:fragment="content">
+    <h1 class="h3 mb-4">Animals</h1>
+
+    <form th:action="@{/animals}" method="get" class="row g-2 align-items-end mb-4">
+        <div class="col-md-3">
+            <label class="form-label" for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">All</option>
+                <option th:each="s : ${statuses}"
+                        th:value="${s}"
+                        th:text="${s}"
+                        th:selected="${s == selectedStatus}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="speciesId">Species</label>
+            <select id="speciesId" name="speciesId" class="form-select">
+                <option value="">All</option>
+                <option th:each="sp : ${species}"
+                        th:value="${sp.id}"
+                        th:text="${sp.name}"
+                        th:selected="${sp.id == selectedSpeciesId}"></option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="shelterId">Shelter</label>
+            <select id="shelterId" name="shelterId" class="form-select">
+                <option value="">All</option>
+                <option th:each="sh : ${shelters}"
+                        th:value="${sh.id}"
+                        th:text="|${sh.name} (${sh.city})|"
+                        th:selected="${sh.id == selectedShelterId}"></option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2">
+            <button type="submit" class="btn btn-primary flex-fill">Filter</button>
+            <a th:href="@{/animals}" class="btn btn-outline-secondary">Reset</a>
+        </div>
+    </form>
+
+    <div th:if="${#lists.isEmpty(animals)}" class="alert alert-light border text-center mb-0">
+        No animals match the current filters.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(animals)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Species</th>
+                    <th>Breed</th>
+                    <th>Sex</th>
+                    <th>Status</th>
+                    <th>Shelter</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="a : ${animals}">
+                    <td th:text="${a.name}">Name</td>
+                    <td th:text="${a.speciesName}">Species</td>
+                    <td th:text="${a.breedName} ?: '—'">Breed</td>
+                    <td th:text="${a.sex}">Sex</td>
+                    <td>
+                        <span th:text="${a.status}"
+                              th:class="${'badge ' + (a.status.name() == 'AVAILABLE' ? 'text-bg-success'
+                                                  : (a.status.name() == 'ADOPTED' ? 'text-bg-secondary'
+                                                  : (a.status.name() == 'RESERVED' ? 'text-bg-info'
+                                                  : (a.status.name() == 'MEDICAL_HOLD' ? 'text-bg-warning'
+                                                  : 'text-bg-light'))))}">Status</span>
+                    </td>
+                    <td th:text="${a.shelterName}">Shelter</td>
+                    <td class="text-end">
+                        <a th:href="@{/animals/{id}(id=${a.id})}" class="btn btn-sm btn-outline-primary">View</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</section>
+</th:block>
+</body>
+</html>
