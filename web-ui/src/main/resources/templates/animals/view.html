@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout(${animal.name}, ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/animals}">Animals</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${animal.name}">Name</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-body p-4">
+
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+                <h1 class="h3 mb-0" th:text="${animal.name}">Name</h1>
+                <span th:text="${animal.status}"
+                      th:class="${'badge fs-6 ' + (animal.status.name() == 'AVAILABLE' ? 'text-bg-success'
+                                              : (animal.status.name() == 'ADOPTED' ? 'text-bg-secondary'
+                                              : (animal.status.name() == 'RESERVED' ? 'text-bg-info'
+                                              : (animal.status.name() == 'MEDICAL_HOLD' ? 'text-bg-warning'
+                                              : 'text-bg-light'))))}">Status</span>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                <span class="badge text-bg-light border" th:text="${'Sex: ' + animal.sex}">Sex</span>
+                <span th:if="${animal.vaccinated}" class="badge text-bg-success">
+                    <i class="bi bi-shield-check me-1"></i>Vaccinated
+                </span>
+                <span th:unless="${animal.vaccinated}" class="badge text-bg-light border">
+                    <i class="bi bi-shield me-1"></i>Not vaccinated
+                </span>
+                <span th:if="${animal.neutered}" class="badge text-bg-success">
+                    <i class="bi bi-check-circle me-1"></i>Neutered
+                </span>
+                <span th:unless="${animal.neutered}" class="badge text-bg-light border">
+                    <i class="bi bi-circle me-1"></i>Not neutered
+                </span>
+            </div>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Species</dt>
+                <dd class="col-sm-9" th:text="${animal.speciesName}">Species</dd>
+
+                <dt class="col-sm-3">Breed</dt>
+                <dd class="col-sm-9" th:text="${animal.breedName} ?: '—'">Breed</dd>
+
+                <dt class="col-sm-3">Shelter</dt>
+                <dd class="col-sm-9" th:text="${animal.shelterName}">Shelter</dd>
+
+                <dt class="col-sm-3">Birth date</dt>
+                <dd class="col-sm-9" th:text="${animal.birthDate} ?: '—'">Birth date</dd>
+
+                <dt class="col-sm-3">Intake date</dt>
+                <dd class="col-sm-9" th:text="${animal.intakeDate}">Intake date</dd>
+
+                <dt class="col-sm-3">Adoption fee</dt>
+                <dd class="col-sm-9" th:text="${animal.adoptionFee} ?: '—'">Fee</dd>
+
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9" th:text="${animal.description} ?: '—'"
+                    style="white-space: pre-line">Description</dd>
+            </dl>
+
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a th:href="@{/animals}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to animals
+        </a>
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

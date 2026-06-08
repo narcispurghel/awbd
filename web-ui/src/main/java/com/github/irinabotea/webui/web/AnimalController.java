@@ -8,6 +8,7 @@ import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -40,6 +41,12 @@ public class AnimalController {
     model.addAttribute("selectedSpeciesId", speciesId);
     model.addAttribute("selectedShelterId", shelterId);
     return "animals/list";
+  }
+
+  @GetMapping("/{id}")
+  public String view(@PathVariable UUID id, Model model) {
+    model.addAttribute("animal", animals.get(id));
+    return "animals/view";
   }
 
   private static <E extends Enum<E>> @Nullable E parseEnum(@Nullable String value, Class<E> type) {

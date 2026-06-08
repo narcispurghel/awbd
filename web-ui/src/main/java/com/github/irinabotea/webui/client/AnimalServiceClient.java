@@ -39,6 +39,10 @@ public class AnimalServiceClient {
     return http.get(b.build().toUriString(), ANIMAL_LIST);
   }
 
+  public BackendDtos.AnimalDtos.AnimalView get(UUID id) {
+    return http.get("/api/v1/animals/" + id, BackendDtos.AnimalDtos.AnimalView.class);
+  }
+
   public List<BackendDtos.AnimalDtos.SpeciesView> species() {
     return http.get("/api/v1/species", SPECIES_LIST);
   }
