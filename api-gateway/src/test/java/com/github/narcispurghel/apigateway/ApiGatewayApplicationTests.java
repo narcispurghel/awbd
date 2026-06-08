@@ -25,6 +25,7 @@ class ApiGatewayApplicationTests {
     registry.add("jwt.secret", () -> "test-secret-test-secret-test-secret-test-secre");
     registry.add("eureka.client.enabled", () -> "false");
     registry.add("spring.cloud.discovery.enabled", () -> "false");
+    registry.add("spring.cloud.service-registry.auto-registration.enabled", () -> "false");
   }
 
   @Test

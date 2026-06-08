@@ -6,6 +6,9 @@ spring:
   cloud:
     discovery:
       enabled: false
+    service-registry:
+      auto-registration:
+        enabled: false
 eureka:
   client:
     enabled: false

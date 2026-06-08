@@ -2,7 +2,7 @@
 
 ## Baseline Today
 
-The repository currently implements the platform foundation plus three real business services:
+The repository currently implements the platform foundation plus four real business services:
 
 - `common`
 - `config-server`
@@ -10,6 +10,7 @@ The repository currently implements the platform foundation plus three real busi
 - `api-gateway`
 - `adoption-service`
 - `animal-service`
+- `notification-service`
 - `user-service`
 - `web-ui`
 
@@ -20,31 +21,28 @@ The current runtime flow is:
 3. `api-gateway` validates JWTs and forwards identity headers.
 4. `animal-service` handles animal catalog, shelter, and taxonomy APIs.
 5. `adoption-service` handles adoption-request lifecycle APIs.
-6. `user-service` handles auth plus adopter account/profile operations.
+6. `adoption-service` publishes adoption lifecycle events to RabbitMQ.
+7. `notification-service` consumes adoption lifecycle notifications from RabbitMQ.
+8. `user-service` handles auth plus adopter account/profile operations.
 
 ## Implemented Modules
 
-| Module          | Port | Status / Responsibility                                                   |
-|-----------------|------|----------------------------------------------------------------------------|
-| `common`        | n/a  | Shared JWT, charset, and `.env` support                                   |
-| `config-server` | 8888 | Spring Cloud Config service for local and service-specific YAML profiles   |
-| `eureka-server` | 8761 | Service discovery                                                         |
-| `api-gateway`   | 8080 | Single entry point, routing, JWT validation, identity-header forwarding    |
-| `adoption-service` | 8083 | Adoption-request lifecycle APIs                                           |
-| `animal-service`| 8082 | Animal catalog, shelter, species, breed, and medical record APIs          |
-| `user-service`  | 8081 | Authentication, user account, and adopter profile APIs                    |
-| `web-ui`        | 8090 | Thymeleaf web client for auth, profile, and account settings              |
-
-## Planned Business Services
-
-| Service                | Port | Status / Intended Responsibility                                          |
-|------------------------|------|---------------------------------------------------------------------------|
-| `notification-service` | 8084 | Planned event consumer for adoption notifications                         |
+| Module              | Port | Status / Responsibility                                                   |
+|---------------------|------|----------------------------------------------------------------------------|
+| `common`            | n/a  | Shared JWT, charset, `.env`, and adoption-event message support           |
+| `config-server`     | 8888 | Spring Cloud Config service for local and service-specific YAML profiles   |
+| `eureka-server`     | 8761 | Service discovery                                                          |
+| `api-gateway`       | 8080 | Single entry point, routing, JWT validation, identity-header forwarding    |
+| `adoption-service`  | 8083 | Adoption-request lifecycle APIs plus RabbitMQ event publication            |
+| `animal-service`    | 8082 | Animal catalog, shelter, species, breed, and medical record APIs          |
+| `notification-service` | 8084 | RabbitMQ consumer for adoption lifecycle notifications                    |
+| `user-service`      | 8081 | Authentication, user account, and adopter profile APIs                    |
+| `web-ui`            | 8090 | Thymeleaf web client for auth, profile, and account settings              |
 
 ## Communication
 
 - **Synchronous**: REST via Spring Cloud LoadBalancer and Eureka-registered service names
-- **Asynchronous**: Not implemented yet; reserved for adoption lifecycle events
+- **Asynchronous**: RabbitMQ-backed adoption lifecycle events between `adoption-service` and `notification-service`
 - **Resilience**: Not implemented yet; will be added only where real inter-service calls exist
 
 ## Security
@@ -63,6 +61,7 @@ awdb/
 ├── api-gateway/
 ├── adoption-service/
 ├── animal-service/
+├── notification-service/
 ├── user-service/
 ├── web-ui/
 ├── build.gradle.kts
@@ -73,6 +72,6 @@ awdb/
 
 The next platform phases are:
 
-1. Add `notification-service`
-2. Introduce async messaging for adoption lifecycle events
-3. Add resilience patterns where real remote calls exist
+1. Add additional notification delivery adapters beyond logging/no-op
+2. Add resilience patterns where real remote calls exist
+3. Expand cross-service integration coverage as more business services land

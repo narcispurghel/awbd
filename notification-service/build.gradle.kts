@@ -6,7 +6,7 @@ plugins {
 
 group = "com.github.narcispurghel"
 version = "0.0.1-SNAPSHOT"
-description = "adoption-service"
+description = "notification-service"
 
 java {
     toolchain {
@@ -24,23 +24,14 @@ extra["springCloudVersion"] =
 
 dependencies {
     implementation(project(":common"))
+    implementation("org.springframework.boot:spring-boot-starter")
     implementation(libs.spring.cloud.config.client)
-    implementation(libs.spring.boot.amqp)
-    implementation(libs.spring.boot.data.jpa)
-    implementation(libs.spring.boot.validation)
-    implementation(libs.spring.boot.webmvc)
-    implementation(libs.spring.boot.security)
     implementation(libs.spring.cloud.eureka.client)
+    implementation(libs.spring.boot.amqp)
     implementation(libs.dotenv.java)
-    runtimeOnly(libs.postgresql)
-    testImplementation(libs.spring.boot.data.jpa.test)
-    testImplementation(libs.spring.boot.validation.test)
-    testImplementation(libs.spring.boot.webmvc.test)
-    testImplementation(libs.spring.boot.security.test)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(libs.spring.boot.testcontainers)
     testImplementation(libs.testcontainers.junit.jupiter)
-    testImplementation("org.testcontainers:postgresql:1.21.4")
     testImplementation(libs.testcontainers.rabbitmq)
     testRuntimeOnly(libs.junit.platform.launcher)
 }

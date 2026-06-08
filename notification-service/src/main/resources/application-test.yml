@@ -1,8 +1,10 @@
 spring:
-  jpa:
-    hibernate:
-      ddl-auto: create-drop
-    show-sql: false
+  main:
+    web-application-type: none
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
   cloud:
     discovery:
       enabled: false
@@ -15,5 +17,3 @@ eureka:
 notification:
   messaging:
     enabled: false
-cors:
-  allowed-origins: http://localhost:8090
