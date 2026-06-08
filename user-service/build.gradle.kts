@@ -24,6 +24,7 @@ extra["springCloudVersion"] =
 
 dependencies {
     implementation(project(":common"))
+    implementation(libs.spring.cloud.config.client)
     implementation(libs.spring.boot.data.jpa)
     implementation(libs.spring.boot.validation)
     implementation(libs.spring.boot.webmvc)

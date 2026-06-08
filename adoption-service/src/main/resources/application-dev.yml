@@ -1,0 +1,20 @@
+# Local dev settings - loaded from repo-root .env via DotenvLoader (see common module).
+spring:
+  datasource:
+    url: ${DB_ADOPTIONS_URL:${DB_URL}}
+    username: ${DB_ADOPTIONS_USER:${DB_USER}}
+    password: ${DB_ADOPTIONS_PASSWORD:${DB_PASSWORD}}
+  rabbitmq:
+    host: ${RABBITMQ_HOST:localhost}
+    port: ${RABBITMQ_PORT:5672}
+    username: ${RABBITMQ_USER:awbd}
+    password: ${RABBITMQ_PASSWORD:awbd}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+notification:
+  messaging:
+    enabled: true
+cors:
+  allowed-origins: http://localhost:8090

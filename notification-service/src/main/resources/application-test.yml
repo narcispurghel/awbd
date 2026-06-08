@@ -1,0 +1,19 @@
+spring:
+  main:
+    web-application-type: none
+  rabbitmq:
+    listener:
+      simple:
+        auto-startup: false
+  cloud:
+    discovery:
+      enabled: false
+    service-registry:
+      auto-registration:
+        enabled: false
+eureka:
+  client:
+    enabled: false
+notification:
+  messaging:
+    enabled: false

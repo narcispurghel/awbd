@@ -22,6 +22,7 @@ extra["springCloudVersion"] = libs.versions.spring.cloud.get()
 
 dependencies {
     implementation(project(":common"))
+    implementation(libs.spring.cloud.config.client)
     implementation("org.springframework.cloud:spring-cloud-starter-gateway-server-webmvc")
     implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
     implementation(libs.spring.data.redis)
