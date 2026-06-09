@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin · Breeds', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Breeds</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h1 class="h3 mb-0">Breeds</h1>
+        <a th:href="@{/admin/breeds/new}" class="btn btn-primary">
+            <i class="bi bi-plus-circle me-1"></i>Add breed
+        </a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(breeds)}" class="alert alert-light border text-center mb-0">
+        No breeds yet. Click <strong>Add breed</strong> to create the first one.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(breeds)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Species</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="b : ${breeds}">
+                    <td th:text="${b.name}">Name</td>
+                    <td th:text="${b.speciesName}">Species</td>
+                    <td class="text-end">
+                        <a th:href="@{/admin/breeds/{id}/edit(id=${b.id})}"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-pencil me-1"></i>Edit
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

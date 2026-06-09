@@ -20,6 +20,9 @@ public class AnimalServiceClient {
   private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.ShelterView>
   > SHELTER_LIST = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
+    List<BackendDtos.AnimalDtos.BreedView>
+  > BREED_LIST = new ParameterizedTypeReference<>() {};
 
   private final BackendHttpClient http;
 
@@ -64,5 +67,41 @@ public class AnimalServiceClient {
 
   public BackendDtos.AnimalDtos.ShelterView updateShelter(UUID id, BackendDtos.AnimalDtos.UpsertShelterRequest body) {
     return http.put("/api/v1/shelters/" + id, body, BackendDtos.AnimalDtos.ShelterView.class);
+  }
+
+  public BackendDtos.AnimalDtos.@Nullable SpeciesView findSpecies(UUID id) {
+    for (BackendDtos.AnimalDtos.SpeciesView s : species()) {
+      if (id.equals(s.id())) return s;
+    }
+    return null;
+  }
+
+  public BackendDtos.AnimalDtos.SpeciesView createSpecies(BackendDtos.AnimalDtos.UpsertSpeciesRequest body) {
+    return http.post("/api/v1/species", body, BackendDtos.AnimalDtos.SpeciesView.class);
+  }
+
+  public BackendDtos.AnimalDtos.SpeciesView updateSpecies(UUID id, BackendDtos.AnimalDtos.UpsertSpeciesRequest body) {
+    return http.put("/api/v1/species/" + id, body, BackendDtos.AnimalDtos.SpeciesView.class);
+  }
+
+  public List<BackendDtos.AnimalDtos.BreedView> breeds(@Nullable UUID speciesId) {
+    UriComponentsBuilder b = UriComponentsBuilder.fromPath("/api/v1/breeds");
+    if (speciesId != null) b.queryParam("speciesId", speciesId.toString());
+    return http.get(b.build().toUriString(), BREED_LIST);
+  }
+
+  public BackendDtos.AnimalDtos.@Nullable BreedView findBreed(UUID id) {
+    for (BackendDtos.AnimalDtos.BreedView b : breeds(null)) {
+      if (id.equals(b.id())) return b;
+    }
+    return null;
+  }
+
+  public BackendDtos.AnimalDtos.BreedView createBreed(BackendDtos.AnimalDtos.UpsertBreedRequest body) {
+    return http.post("/api/v1/breeds", body, BackendDtos.AnimalDtos.BreedView.class);
+  }
+
+  public BackendDtos.AnimalDtos.BreedView updateBreed(UUID id, BackendDtos.AnimalDtos.UpsertBreedRequest body) {
+    return http.put("/api/v1/breeds/" + id, body, BackendDtos.AnimalDtos.BreedView.class);
   }
 }
