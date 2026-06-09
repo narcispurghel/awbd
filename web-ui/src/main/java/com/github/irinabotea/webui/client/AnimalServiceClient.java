@@ -46,6 +46,10 @@ public class AnimalServiceClient {
     return http.get("/api/v1/animals/" + id, BackendDtos.AnimalDtos.AnimalView.class);
   }
 
+  public BackendDtos.AnimalDtos.AnimalView createAnimal(BackendDtos.AnimalDtos.UpsertAnimalRequest body) {
+    return http.post("/api/v1/animals", body, BackendDtos.AnimalDtos.AnimalView.class);
+  }
+
   public List<BackendDtos.AnimalDtos.SpeciesView> species() {
     return http.get("/api/v1/species", SPECIES_LIST);
   }
