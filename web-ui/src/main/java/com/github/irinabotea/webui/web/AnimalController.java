@@ -46,6 +46,13 @@ public class AnimalController {
   @GetMapping("/{id}")
   public String view(@PathVariable UUID id, Model model) {
     model.addAttribute("animal", animals.get(id));
+    model.addAttribute("medicalRecords", animals.medicalRecords(id));
+    if (!model.containsAttribute("medicalRecordForm")) {
+      model.addAttribute(
+        "medicalRecordForm",
+        new com.github.irinabotea.webui.web.form.MedicalRecordForm()
+      );
+    }
     return "animals/view";
   }
 

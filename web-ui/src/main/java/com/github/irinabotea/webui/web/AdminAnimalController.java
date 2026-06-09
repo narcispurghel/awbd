@@ -5,6 +5,7 @@ import com.github.irinabotea.webui.client.BackendDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendException;
 import com.github.irinabotea.webui.web.form.AnimalForm;
+import com.github.irinabotea.webui.web.form.MedicalRecordForm;
 import jakarta.validation.Valid;
 import java.beans.PropertyEditorSupport;
 import java.math.BigDecimal;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,7 +32,7 @@ public class AdminAnimalController {
     this.animals = animals;
   }
 
-  @InitBinder("animalForm")
+  @InitBinder({"animalForm", "medicalRecordForm"})
   void initBinder(WebDataBinder binder) {
     binder.registerCustomEditor(UUID.class, new PropertyEditorSupport() {
       @Override
@@ -51,7 +53,7 @@ public class AdminAnimalController {
     if (!model.containsAttribute("animalForm")) {
       model.addAttribute("animalForm", new AnimalForm());
     }
-    populateForm(model);
+    populateForm(model, null);
     return "admin/animals/form";
   }
 
@@ -63,7 +65,7 @@ public class AdminAnimalController {
     RedirectAttributes flash
   ) {
     if (binding.hasErrors()) {
-      populateForm(model);
+      populateForm(model, null);
       return "admin/animals/form";
     }
     try {
@@ -72,20 +74,102 @@ public class AdminAnimalController {
       return "redirect:/animals/" + created.id();
     } catch (BackendException ex) {
       applyBackendErrors(binding, ex);
-      populateForm(model);
+      populateForm(model, null);
       return "admin/animals/form";
     }
   }
 
-  private void populateForm(Model model) {
+  @GetMapping("/{id}/edit")
+  public String editPage(@PathVariable UUID id, Model model) {
+    if (!model.containsAttribute("animalForm")) {
+      AnimalDtos.AnimalView existing;
+      try {
+        existing = animals.get(id);
+      } catch (BackendException ex) {
+        return "redirect:/animals";
+      }
+      model.addAttribute("animalForm", toForm(existing));
+    }
+    populateForm(model, id);
+    return "admin/animals/form";
+  }
+
+  @PostMapping("/{id}")
+  public String update(
+    @PathVariable UUID id,
+    @Valid @ModelAttribute("animalForm") AnimalForm form,
+    BindingResult binding,
+    Model model,
+    RedirectAttributes flash
+  ) {
+    if (binding.hasErrors()) {
+      populateForm(model, id);
+      return "admin/animals/form";
+    }
+    try {
+      animals.updateAnimal(id, toRequest(form));
+      flash.addFlashAttribute("success", "Animal updated.");
+      return "redirect:/animals/" + id;
+    } catch (BackendException ex) {
+      applyBackendErrors(binding, ex);
+      populateForm(model, id);
+      return "admin/animals/form";
+    }
+  }
+
+  @PostMapping("/{id}/medical-records")
+  public String addMedicalRecord(
+    @PathVariable UUID id,
+    @Valid @ModelAttribute("medicalRecordForm") MedicalRecordForm form,
+    BindingResult binding,
+    RedirectAttributes flash
+  ) {
+    if (binding.hasErrors()) {
+      flashFormErrors(flash, form, binding);
+      return "redirect:/animals/" + id + "#medical";
+    }
+    try {
+      animals.addMedicalRecord(id, toMedicalRequest(form));
+      flash.addFlashAttribute("success", "Medical record added.");
+      return "redirect:/animals/" + id + "#medical";
+    } catch (BackendException ex) {
+      applyBackendErrors(binding, ex);
+      flashFormErrors(flash, form, binding);
+      return "redirect:/animals/" + id + "#medical";
+    }
+  }
+
+  private void populateForm(Model model, @org.jspecify.annotations.Nullable UUID id) {
+    model.addAttribute("animalId", id);
     model.addAttribute("shelterOptions", animals.shelters());
     model.addAttribute("speciesOptions", animals.species());
     model.addAttribute("breedOptions", animals.breeds(null));
     model.addAttribute("statuses", AnimalDtos.AnimalStatus.values());
     model.addAttribute("sexes", AnimalDtos.Sex.values());
-    model.addAttribute("pageTitle", "Admin \u00B7 New animal");
-    model.addAttribute("heading", "New animal");
-    model.addAttribute("submitLabel", "Create animal");
+    model.addAttribute(
+      "pageTitle",
+      id == null ? "Admin \u00B7 New animal" : "Admin \u00B7 Edit animal"
+    );
+    model.addAttribute("heading", id == null ? "New animal" : "Edit animal");
+    model.addAttribute("submitLabel", id == null ? "Create animal" : "Save changes");
+    model.addAttribute("crumbLabel", id == null ? "New" : "Edit");
+  }
+
+  private static AnimalForm toForm(AnimalDtos.AnimalView v) {
+    AnimalForm f = new AnimalForm();
+    f.setName(v.name());
+    f.setShelterId(v.shelterId());
+    f.setSpeciesId(v.speciesId());
+    f.setBreedId(v.breedId());
+    f.setStatus(v.status());
+    f.setSex(v.sex());
+    f.setDescription(v.description());
+    f.setBirthDate(v.birthDate());
+    f.setIntakeDate(v.intakeDate());
+    f.setAdoptionFee(v.adoptionFee());
+    f.setVaccinated(v.vaccinated());
+    f.setNeutered(v.neutered());
+    return f;
   }
 
   private static AnimalDtos.UpsertAnimalRequest toRequest(AnimalForm f) {
@@ -104,6 +188,29 @@ public class AdminAnimalController {
       f.getAdoptionFee(),
       f.isVaccinated(),
       f.isNeutered()
+    );
+  }
+
+  private static AnimalDtos.UpsertMedicalRecordRequest toMedicalRequest(MedicalRecordForm f) {
+    return new AnimalDtos.UpsertMedicalRecordRequest(
+      f.getTitle(),
+      requireNonNull(f.getExaminationDate(), "examinationDate"),
+      blankToNull(f.getTreatment()),
+      blankToNull(f.getNotes()),
+      f.getWeightKg(),
+      f.isFollowUpRequired()
+    );
+  }
+
+  private static void flashFormErrors(
+    RedirectAttributes flash,
+    MedicalRecordForm form,
+    BindingResult binding
+  ) {
+    flash.addFlashAttribute("medicalRecordForm", form);
+    flash.addFlashAttribute(
+      "org.springframework.validation.BindingResult.medicalRecordForm",
+      binding
     );
   }
 

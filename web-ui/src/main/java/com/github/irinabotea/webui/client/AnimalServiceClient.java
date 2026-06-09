@@ -23,6 +23,9 @@ public class AnimalServiceClient {
   private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.BreedView>
   > BREED_LIST = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
+    List<BackendDtos.AnimalDtos.MedicalRecordView>
+  > MEDICAL_RECORD_LIST = new ParameterizedTypeReference<>() {};
 
   private final BackendHttpClient http;
 
@@ -48,6 +51,28 @@ public class AnimalServiceClient {
 
   public BackendDtos.AnimalDtos.AnimalView createAnimal(BackendDtos.AnimalDtos.UpsertAnimalRequest body) {
     return http.post("/api/v1/animals", body, BackendDtos.AnimalDtos.AnimalView.class);
+  }
+
+  public BackendDtos.AnimalDtos.AnimalView updateAnimal(
+    UUID id,
+    BackendDtos.AnimalDtos.UpsertAnimalRequest body
+  ) {
+    return http.put("/api/v1/animals/" + id, body, BackendDtos.AnimalDtos.AnimalView.class);
+  }
+
+  public List<BackendDtos.AnimalDtos.MedicalRecordView> medicalRecords(UUID animalId) {
+    return http.get("/api/v1/animals/" + animalId + "/medical-records", MEDICAL_RECORD_LIST);
+  }
+
+  public BackendDtos.AnimalDtos.MedicalRecordView addMedicalRecord(
+    UUID animalId,
+    BackendDtos.AnimalDtos.UpsertMedicalRecordRequest body
+  ) {
+    return http.post(
+      "/api/v1/animals/" + animalId + "/medical-records",
+      body,
+      BackendDtos.AnimalDtos.MedicalRecordView.class
+    );
   }
 
   public List<BackendDtos.AnimalDtos.SpeciesView> species() {
