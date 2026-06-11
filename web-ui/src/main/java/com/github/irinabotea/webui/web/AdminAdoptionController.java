@@ -7,12 +7,15 @@ import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos.AdoptionRequestStatus;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendException;
+import com.github.irinabotea.webui.client.UserServiceClient;
 import com.github.irinabotea.webui.web.form.ReviewForm;
 import jakarta.validation.Valid;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Controller;
@@ -35,10 +38,16 @@ public class AdminAdoptionController {
 
   private final AdoptionServiceClient adoptions;
   private final AnimalServiceClient animals;
+  private final UserServiceClient users;
 
-  public AdminAdoptionController(AdoptionServiceClient adoptions, AnimalServiceClient animals) {
+  public AdminAdoptionController(
+    AdoptionServiceClient adoptions,
+    AnimalServiceClient animals,
+    UserServiceClient users
+  ) {
     this.adoptions = adoptions;
     this.animals = animals;
+    this.users = users;
   }
 
   @GetMapping
@@ -57,8 +66,22 @@ public class AdminAdoptionController {
       animalIndex.put(a.id(), a);
     }
 
+    Set<UUID> adopterIds = new HashSet<>();
+    for (AdoptionDtos.AdoptionRequestView r : requests) {
+      adopterIds.add(r.adopterId());
+    }
+    Map<UUID, BackendDtos.CurrentUser> adopterIndex = new HashMap<>(adopterIds.size());
+    for (UUID adopterId : adopterIds) {
+      try {
+        adopterIndex.put(adopterId, users.getUserById(adopterId));
+      } catch (BackendException ignored) {
+        // user lookup failures fall back to raw UUID display
+      }
+    }
+
     model.addAttribute("requests", requests);
     model.addAttribute("animalIndex", animalIndex);
+    model.addAttribute("adopterIndex", adopterIndex);
     model.addAttribute("animalOptions", allAnimals);
     model.addAttribute("statuses", AdoptionRequestStatus.values());
     model.addAttribute("selectedStatus", status);
@@ -130,11 +153,20 @@ public class AdminAdoptionController {
   private void populateView(Model model, AdoptionDtos.AdoptionRequestView request) {
     model.addAttribute("request", request);
     model.addAttribute("animal", fetchAnimal(request.animalId()));
+    model.addAttribute("adopter", fetchUser(request.adopterId()));
   }
 
   private AnimalDtos.@Nullable AnimalView fetchAnimal(UUID id) {
     try {
       return animals.get(id);
+    } catch (BackendException ex) {
+      return null;
+    }
+  }
+
+  private BackendDtos.@Nullable CurrentUser fetchUser(UUID id) {
+    try {
+      return users.getUserById(id);
     } catch (BackendException ex) {
       return null;
     }

@@ -1,5 +1,6 @@
 package com.github.irinabotea.webui.client;
 
+import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 /** Wraps REST calls to user-service (via api-gateway). */
@@ -26,6 +27,10 @@ public class UserServiceClient {
 
   public BackendDtos.CurrentUser getCurrentUser() {
     return http.get("/api/v1/users/me", BackendDtos.CurrentUser.class);
+  }
+
+  public BackendDtos.CurrentUser getUserById(UUID id) {
+    return http.get("/api/v1/users/" + id, BackendDtos.CurrentUser.class);
   }
 
   public BackendDtos.ProfileView updateProfile(BackendDtos.UpdateProfileRequest body) {

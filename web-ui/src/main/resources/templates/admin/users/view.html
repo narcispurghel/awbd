@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin · User', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Admin</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/adoptions}">Adoption requests</a></li>
+            <li class="breadcrumb-item active" aria-current="page" th:text="${user.email()}">User</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="d-flex flex-wrap align-items-center justify-content-between mb-3 gap-2">
+                <h1 class="h3 mb-0">
+                    <th:block th:if="${user.profile() != null}"
+                              th:text="${user.profile().firstName() + ' ' + user.profile().lastName()}">First Last</th:block>
+                    <th:block th:if="${user.profile() == null}" th:text="${user.email()}">email@example.com</th:block>
+                </h1>
+                <div class="d-flex gap-2">
+                    <span class="badge text-bg-info" th:text="${user.role()}">ROLE</span>
+                    <span th:if="${user.active()}" class="badge text-bg-success">Active</span>
+                    <span th:unless="${user.active()}" class="badge text-bg-secondary">Inactive</span>
+                </div>
+            </div>
+
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Email</dt>
+                <dd class="col-sm-9" th:text="${user.email()}">email@example.com</dd>
+
+                <dt class="col-sm-3">User ID</dt>
+                <dd class="col-sm-9 small font-monospace text-muted" th:text="${user.id()}">uuid</dd>
+
+                <dt class="col-sm-3">Created</dt>
+                <dd class="col-sm-9 small text-muted" th:text="${user.createdAt()}">date</dd>
+            </dl>
+        </div>
+    </div>
+
+    <div th:if="${user.profile() != null}" class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Adopter profile</h2>
+            <dl class="row mb-0">
+                <dt class="col-sm-3">First name</dt>
+                <dd class="col-sm-9" th:text="${user.profile().firstName()}">First</dd>
+
+                <dt class="col-sm-3">Last name</dt>
+                <dd class="col-sm-9" th:text="${user.profile().lastName()}">Last</dd>
+
+                <dt class="col-sm-3">Phone</dt>
+                <dd class="col-sm-9" th:text="${user.profile().phone()} ?: '—'">phone</dd>
+
+                <dt class="col-sm-3">City</dt>
+                <dd class="col-sm-9" th:text="${user.profile().city()} ?: '—'">city</dd>
+
+                <dt class="col-sm-3">House type</dt>
+                <dd class="col-sm-9" th:text="${user.profile().houseType()}">house</dd>
+
+                <dt class="col-sm-3">Has yard</dt>
+                <dd class="col-sm-9" th:text="${user.profile().hasYard()} ? 'Yes' : 'No'">no</dd>
+
+                <dt class="col-sm-3">Experience (months)</dt>
+                <dd class="col-sm-9" th:text="${user.profile().experienceWithPets()}">0</dd>
+
+                <dt class="col-sm-3">Verified</dt>
+                <dd class="col-sm-9">
+                    <span th:if="${user.profile().verifiedStatus()}" class="badge text-bg-success">Verified</span>
+                    <span th:unless="${user.profile().verifiedStatus()}" class="badge text-bg-light border">Not verified</span>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div th:if="${user.profile() == null}" class="alert alert-light border">
+        This user has no adopter profile.
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

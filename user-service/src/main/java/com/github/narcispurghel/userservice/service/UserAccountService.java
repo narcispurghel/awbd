@@ -41,6 +41,11 @@ public class UserAccountService {
     return UserMapper.toCurrentUser(requireUser(userId));
   }
 
+  @Transactional(readOnly = true)
+  public UserDtos.CurrentUser userById(UUID userId) {
+    return UserMapper.toCurrentUser(requireUser(userId));
+  }
+
   @Transactional
   public UserDtos.ProfileView updateProfile(UUID userId, UserDtos.UpdateProfileRequest request) {
     User user = requireUser(userId);

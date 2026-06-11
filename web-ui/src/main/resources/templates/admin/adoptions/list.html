@@ -61,7 +61,8 @@
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="r : ${requests}" th:with="a=${animalIndex.get(r.animalId())}">
+                <tr th:each="r : ${requests}"
+                    th:with="a=${animalIndex.get(r.animalId())}, u=${adopterIndex.get(r.adopterId())}">
                     <td>
                         <a th:if="${a != null}"
                            th:href="@{/animals/{id}(id=${r.animalId()})}"
@@ -77,7 +78,14 @@
                                                 : 'text-bg-secondary')))}">Status</span>
                     </td>
                     <td>
-                        <span class="text-muted small font-monospace" th:text="${r.adopterId()}">adopter</span>
+                        <a th:if="${u != null and u.profile() != null}"
+                           th:href="@{/admin/users/{id}(id=${r.adopterId()})}"
+                           th:text="${u.profile().firstName() + ' ' + u.profile().lastName()}">First Last</a>
+                        <a th:if="${u != null and u.profile() == null}"
+                           th:href="@{/admin/users/{id}(id=${r.adopterId()})}"
+                           th:text="${u.email()}">email</a>
+                        <span th:if="${u == null}" class="text-muted small font-monospace"
+                              th:text="${r.adopterId()}">adopter</span>
                     </td>
                     <td><small class="text-muted" th:text="${r.createdAt()}">created</small></td>
                     <td><small class="text-muted" th:text="${r.updatedAt()}">updated</small></td>

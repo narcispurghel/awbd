@@ -4,8 +4,10 @@ import com.github.narcispurghel.userservice.dto.UserDtos;
 import com.github.narcispurghel.userservice.service.UserAccountService;
 import jakarta.validation.Valid;
 import java.util.UUID;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -25,6 +27,12 @@ public class UserController {
   @GetMapping("/me")
   public UserDtos.CurrentUser me(Authentication authentication) {
     return userAccountService.currentUser(requireUserId(authentication));
+  }
+
+  @GetMapping("/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public UserDtos.CurrentUser getById(@PathVariable UUID id) {
+    return userAccountService.userById(id);
   }
 
   @PutMapping("/me/profile")
