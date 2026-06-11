@@ -30,4 +30,8 @@ public class AdoptionServiceClient {
   public List<BackendDtos.AdoptionDtos.AdoptionRequestView> mine() {
     return http.get("/api/v1/adoptions", REQUEST_LIST);
   }
+
+  public void cancel(UUID id) {
+    http.postVoid("/api/v1/adoptions/" + id + "/cancel", null);
+  }
 }

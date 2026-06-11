@@ -12,8 +12,6 @@
         </ol>
     </nav>
 
-    <div th:replace="~{fragments/alerts :: alerts}"></div>
-
     <div class="card shadow-sm">
         <div class="card-body p-4">
 
@@ -74,17 +72,24 @@
                     style="white-space: pre-line">Description</dd>
             </dl>
 
-            <div sec:authorize="isAuthenticated()"
+            <div sec:authorize="isAuthenticated() and !hasRole('ADMIN')"
                  th:if="${animal.status.name() == 'AVAILABLE'}"
                  class="mt-4 pt-3 border-top">
-                <form th:action="@{/adoptions/request/{id}(id=${animal.id})}" method="post" class="d-inline">
-                    <button type="submit" class="btn btn-success">
-                        <i class="bi bi-heart-fill me-1"></i>Request adoption
-                    </button>
-                </form>
-                <small class="text-muted ms-2">
-                    You'll be able to track this request in <a th:href="@{/adoptions/me}">My adoptions</a>.
-                </small>
+                <div th:if="${existingPendingRequest != null}" class="alert alert-info mb-0">
+                    <i class="bi bi-clock-history me-1"></i>
+                    You already have a pending request for this animal.
+                    <a th:href="@{/adoptions/me}" class="alert-link">View my adoptions</a>.
+                </div>
+                <th:block th:if="${existingPendingRequest == null}">
+                    <form th:action="@{/adoptions/request/{id}(id=${animal.id})}" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-heart-fill me-1"></i>Request adoption
+                        </button>
+                    </form>
+                    <small class="text-muted ms-2">
+                        You'll be able to track this request in <a th:href="@{/adoptions/me}">My adoptions</a>.
+                    </small>
+                </th:block>
             </div>
 
         </div>

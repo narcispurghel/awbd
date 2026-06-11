@@ -41,6 +41,17 @@ public class AdoptionController {
     }
   }
 
+  @PostMapping("/{id}/cancel")
+  public String cancel(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      adoptions.cancel(id);
+      flash.addFlashAttribute("success", "Adoption request cancelled.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/adoptions/me";
+  }
+
   @GetMapping("/me")
   public String mine(Model model) {
     List<AdoptionDtos.AdoptionRequestView> requests = adoptions.mine();

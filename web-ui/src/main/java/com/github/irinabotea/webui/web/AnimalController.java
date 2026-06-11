@@ -1,10 +1,14 @@
 package com.github.irinabotea.webui.web;
 
+import com.github.irinabotea.webui.client.AdoptionServiceClient;
 import com.github.irinabotea.webui.client.AnimalServiceClient;
+import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos.AnimalStatus;
+import com.github.irinabotea.webui.client.BackendException;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +21,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class AnimalController {
 
   private final AnimalServiceClient animals;
+  private final AdoptionServiceClient adoptions;
 
-  public AnimalController(AnimalServiceClient animals) {
+  public AnimalController(AnimalServiceClient animals, AdoptionServiceClient adoptions) {
     this.animals = animals;
+    this.adoptions = adoptions;
   }
 
   @GetMapping
@@ -44,8 +50,9 @@ public class AnimalController {
   }
 
   @GetMapping("/{id}")
-  public String view(@PathVariable UUID id, Model model) {
-    model.addAttribute("animal", animals.get(id));
+  public String view(@PathVariable UUID id, Model model, @Nullable Authentication auth) {
+    AnimalDtos.AnimalView animal = animals.get(id);
+    model.addAttribute("animal", animal);
     model.addAttribute("medicalRecords", animals.medicalRecords(id));
     if (!model.containsAttribute("medicalRecordForm")) {
       model.addAttribute(
@@ -53,7 +60,34 @@ public class AnimalController {
         new com.github.irinabotea.webui.web.form.MedicalRecordForm()
       );
     }
+    model.addAttribute("existingPendingRequest", findOwnPending(animal, auth));
     return "animals/view";
+  }
+
+  private AdoptionDtos.@Nullable AdoptionRequestView findOwnPending(
+    AnimalDtos.AnimalView animal,
+    @Nullable Authentication auth
+  ) {
+    if (auth == null || animal.status() != AnimalStatus.AVAILABLE || isAdmin(auth)) {
+      return null;
+    }
+    try {
+      for (AdoptionDtos.AdoptionRequestView r : adoptions.mine()) {
+        if (
+          r.status() == AdoptionDtos.AdoptionRequestStatus.PENDING
+            && animal.id().equals(r.animalId())
+        ) {
+          return r;
+        }
+      }
+    } catch (BackendException ignored) {
+      // Best-effort: if adoption-service is unreachable, fall back to showing the button.
+    }
+    return null;
+  }
+
+  private static boolean isAdmin(Authentication auth) {
+    return auth.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
   }
 
   private static <E extends Enum<E>> @Nullable E parseEnum(@Nullable String value, Class<E> type) {

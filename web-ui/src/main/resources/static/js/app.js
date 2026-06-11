@@ -41,3 +41,30 @@
     });
   });
 })();
+
+// Cancel-adoption confirmation modal: when shown, copies request id + animal
+// name from the triggering button into the modal's form action and body.
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('cancelRequestModal');
+    if (!modal) {
+      return;
+    }
+    var form = modal.querySelector('[data-cancel-request-form]');
+    var animalLabel = modal.querySelector('[data-cancel-request-animal]');
+    if (!form || !animalLabel) {
+      return;
+    }
+    var baseAction = form.getAttribute('action') || '';
+    modal.addEventListener('show.bs.modal', function (event) {
+      var trigger = event.relatedTarget;
+      if (!trigger) {
+        return;
+      }
+      var requestId = trigger.getAttribute('data-request-id') || '';
+      var animalName = trigger.getAttribute('data-animal-name') || 'this animal';
+      form.setAttribute('action', baseAction.replace('placeholder', requestId));
+      animalLabel.textContent = animalName;
+    });
+  });
+})();

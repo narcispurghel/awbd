@@ -10,8 +10,6 @@
         </ol>
     </nav>
 
-    <div th:replace="~{fragments/alerts :: alerts}"></div>
-
     <h1 class="h3 mb-3">My adoption requests</h1>
 
     <div th:if="${#lists.isEmpty(rows)}" class="alert alert-light border text-center">
@@ -30,6 +28,7 @@
                     <th>Requested</th>
                     <th>Last update</th>
                     <th>Review note</th>
+                    <th class="text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -51,9 +50,46 @@
                     <td><small class="text-muted" th:text="${r.createdAt()}">created</small></td>
                     <td><small class="text-muted" th:text="${r.updatedAt()}">updated</small></td>
                     <td th:text="${r.reviewNote()} ?: '—'">note</td>
+                    <td class="text-end">
+                        <button th:if="${r.status().name() == 'PENDING'}"
+                                type="button"
+                                class="btn btn-sm btn-outline-danger"
+                                data-bs-toggle="modal"
+                                data-bs-target="#cancelRequestModal"
+                                th:attr="data-request-id=${r.id()},
+                                         data-animal-name=${a != null ? a.name() : r.animalId()}">
+                            <i class="bi bi-x-circle me-1"></i>Cancel
+                        </button>
+                    </td>
                 </tr>
             </tbody>
         </table>
+    </div>
+
+    <div class="modal fade" id="cancelRequestModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <form th:action="@{/adoptions/placeholder/cancel}" method="post" data-cancel-request-form>
+                    <div class="modal-header">
+                        <h2 class="modal-title h5">Cancel adoption request?</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p class="mb-0">
+                            This will withdraw your pending request for
+                            <strong data-cancel-request-animal>this animal</strong>.
+                            You can request the animal again later if it's still available.
+                        </p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Keep request</button>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle me-1"></i>Cancel request
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
 </section>
