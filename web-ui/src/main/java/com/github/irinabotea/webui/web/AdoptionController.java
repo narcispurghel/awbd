@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,7 +54,10 @@ public class AdoptionController {
   }
 
   @GetMapping("/me")
-  public String mine(Model model) {
+  public String mine(Model model, @Nullable Authentication auth) {
+    if (auth != null && isAdmin(auth)) {
+      return "redirect:/admin/adoptions";
+    }
     List<AdoptionDtos.AdoptionRequestView> requests = adoptions.mine();
     List<MyAdoptionRow> rows = new ArrayList<>(requests.size());
     for (AdoptionDtos.AdoptionRequestView r : requests) {
@@ -61,6 +65,10 @@ public class AdoptionController {
     }
     model.addAttribute("rows", rows);
     return "adoptions/me";
+  }
+
+  private static boolean isAdmin(Authentication auth) {
+    return auth.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
   }
 
   private AnimalDtos.@Nullable AnimalView fetchAnimal(UUID id) {
