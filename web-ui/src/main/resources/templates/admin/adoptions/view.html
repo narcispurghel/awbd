@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin · Review adoption', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Admin</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/adoptions}">Adoption requests</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Review</li>
+        </ol>
+    </nav>
+
+    <h1 class="h3 mb-3">Review adoption request</h1>
+
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <dl class="row mb-0">
+                <dt class="col-sm-3">Animal</dt>
+                <dd class="col-sm-9">
+                    <a th:if="${animal != null}"
+                       th:href="@{/animals/{id}(id=${request.animalId()})}"
+                       th:text="${animal.name()}">Animal</a>
+                    <span th:if="${animal == null}" class="text-muted small font-monospace"
+                          th:text="${request.animalId()}">UUID</span>
+                </dd>
+
+                <dt class="col-sm-3">Status</dt>
+                <dd class="col-sm-9">
+                    <span th:text="${request.status()}"
+                          th:class="${'badge ' + (request.status().name() == 'APPROVED' ? 'text-bg-success'
+                                            : (request.status().name() == 'PENDING'  ? 'text-bg-warning'
+                                            : (request.status().name() == 'REJECTED' ? 'text-bg-danger'
+                                            : 'text-bg-secondary')))}">Status</span>
+                </dd>
+
+                <dt class="col-sm-3">Adopter</dt>
+                <dd class="col-sm-9 small font-monospace text-muted" th:text="${request.adopterId()}">adopter</dd>
+
+                <dt class="col-sm-3">Requested</dt>
+                <dd class="col-sm-9 small text-muted" th:text="${request.createdAt()}">created</dd>
+
+                <dt class="col-sm-3">Last update</dt>
+                <dd class="col-sm-9 small text-muted" th:text="${request.updatedAt()}">updated</dd>
+
+                <th:block th:if="${request.reviewedBy() != null}">
+                    <dt class="col-sm-3">Reviewed by</dt>
+                    <dd class="col-sm-9 small font-monospace text-muted"
+                        th:text="${request.reviewedBy()}">reviewer</dd>
+                </th:block>
+
+                <th:block th:if="${request.reviewNote() != null}">
+                    <dt class="col-sm-3">Review note</dt>
+                    <dd class="col-sm-9" style="white-space: pre-line" th:text="${request.reviewNote()}">note</dd>
+                </th:block>
+            </dl>
+        </div>
+    </div>
+
+    <div th:if="${request.status().name() == 'PENDING'}" class="card shadow-sm">
+        <div class="card-body">
+            <h2 class="h5 mb-3">Decision</h2>
+            <form th:action="@{/admin/adoptions/{id}/review(id=${request.id()})}"
+                  th:object="${reviewForm}" method="post" novalidate>
+                <div th:replace="~{fragments/form-errors :: globals}"></div>
+
+                <div class="mb-3">
+                    <div class="form-check">
+                        <input id="status-approved" class="form-check-input" type="radio"
+                               th:field="*{status}" value="APPROVED"/>
+                        <label for="status-approved" class="form-check-label">
+                            <span class="badge text-bg-success me-1">APPROVE</span>
+                            Approve this adoption.
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input id="status-rejected" class="form-check-input" type="radio"
+                               th:field="*{status}" value="REJECTED"/>
+                        <label for="status-rejected" class="form-check-label">
+                            <span class="badge text-bg-danger me-1">REJECT</span>
+                            Reject this adoption.
+                        </label>
+                    </div>
+                    <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('status')})}"></div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="reviewNote">Note <span class="text-muted small">(optional)</span></label>
+                    <textarea id="reviewNote" th:field="*{reviewNote}" rows="3" maxlength="1000"
+                              class="form-control"
+                              th:classappend="${#fields.hasErrors('reviewNote')} ? 'is-invalid'"
+                              placeholder="Shown to the adopter."></textarea>
+                    <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('reviewNote')})}"></div>
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <a th:href="@{/admin/adoptions}" class="btn btn-outline-secondary">Cancel</a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2-square me-1"></i>Submit decision
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div th:unless="${request.status().name() == 'PENDING'}" class="alert alert-info mb-0">
+        <i class="bi bi-info-circle me-1"></i>
+        This request is no longer pending and cannot be reviewed.
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

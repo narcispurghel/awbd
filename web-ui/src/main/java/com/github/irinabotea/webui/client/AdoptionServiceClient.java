@@ -46,4 +46,19 @@ public class AdoptionServiceClient {
   public void cancel(UUID id) {
     http.postVoid("/api/v1/adoptions/" + id + "/cancel", null);
   }
+
+  public BackendDtos.AdoptionDtos.AdoptionRequestView get(UUID id) {
+    return http.get("/api/v1/adoptions/" + id, BackendDtos.AdoptionDtos.AdoptionRequestView.class);
+  }
+
+  public BackendDtos.AdoptionDtos.AdoptionRequestView review(
+    UUID id,
+    BackendDtos.AdoptionDtos.ReviewAdoptionRequest body
+  ) {
+    return http.post(
+      "/api/v1/adoptions/" + id + "/review",
+      body,
+      BackendDtos.AdoptionDtos.AdoptionRequestView.class
+    );
+  }
 }
