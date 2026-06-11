@@ -26,6 +26,9 @@ public class AnimalServiceClient {
   private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.MedicalRecordView>
   > MEDICAL_RECORD_LIST = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
+    List<BackendDtos.AnimalDtos.AnimalPhotoView>
+  > PHOTO_LIST = new ParameterizedTypeReference<>() {};
 
   private final BackendHttpClient http;
 
@@ -132,5 +135,33 @@ public class AnimalServiceClient {
 
   public BackendDtos.AnimalDtos.BreedView updateBreed(UUID id, BackendDtos.AnimalDtos.UpsertBreedRequest body) {
     return http.put("/api/v1/breeds/" + id, body, BackendDtos.AnimalDtos.BreedView.class);
+  }
+
+  public List<BackendDtos.AnimalDtos.AnimalPhotoView> photos(UUID animalId) {
+    return http.get("/api/v1/animals/" + animalId + "/photos", PHOTO_LIST);
+  }
+
+  public BackendDtos.AnimalDtos.AnimalPhotoView uploadPhoto(
+    UUID animalId,
+    String filename,
+    String contentType,
+    byte[] data
+  ) {
+    return http.postMultipart(
+      "/api/v1/animals/" + animalId + "/photos",
+      "file",
+      filename,
+      contentType,
+      data,
+      BackendDtos.AnimalDtos.AnimalPhotoView.class
+    );
+  }
+
+  public void deletePhoto(UUID animalId, UUID photoId) {
+    http.delete("/api/v1/animals/" + animalId + "/photos/" + photoId);
+  }
+
+  public BackendHttpClient.BytesResponse photoBytes(UUID animalId, UUID photoId) {
+    return http.getBytes("/api/v1/animals/" + animalId + "/photos/" + photoId);
   }
 }

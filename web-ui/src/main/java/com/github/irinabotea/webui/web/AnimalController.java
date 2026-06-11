@@ -6,8 +6,11 @@ import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos.AnimalStatus;
 import com.github.irinabotea.webui.client.BackendException;
+import com.github.irinabotea.webui.client.BackendHttpClient;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,6 +57,7 @@ public class AnimalController {
     AnimalDtos.AnimalView animal = animals.get(id);
     model.addAttribute("animal", animal);
     model.addAttribute("medicalRecords", animals.medicalRecords(id));
+    model.addAttribute("photos", animals.photos(id));
     if (!model.containsAttribute("medicalRecordForm")) {
       model.addAttribute(
         "medicalRecordForm",
@@ -62,6 +66,21 @@ public class AnimalController {
     }
     model.addAttribute("existingPendingRequest", findOwnPending(animal, auth));
     return "animals/view";
+  }
+
+  @GetMapping("/{animalId}/photos/{photoId}")
+  public ResponseEntity<byte[]> photoBytes(
+    @PathVariable UUID animalId,
+    @PathVariable UUID photoId
+  ) {
+    try {
+      BackendHttpClient.BytesResponse p = animals.photoBytes(animalId, photoId);
+      return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(p.contentType()))
+        .body(p.bytes());
+    } catch (BackendException ex) {
+      return ResponseEntity.status(ex.status()).build();
+    }
   }
 
   private AdoptionDtos.@Nullable AdoptionRequestView findOwnPending(

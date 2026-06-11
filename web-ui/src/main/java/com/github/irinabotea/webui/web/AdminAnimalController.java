@@ -8,7 +8,9 @@ import com.github.irinabotea.webui.web.form.AnimalForm;
 import com.github.irinabotea.webui.web.form.MedicalRecordForm;
 import jakarta.validation.Valid;
 import java.beans.PropertyEditorSupport;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -91,6 +95,11 @@ public class AdminAnimalController {
       model.addAttribute("animalForm", toForm(existing));
     }
     populateForm(model, id);
+    try {
+      model.addAttribute("photos", animals.photos(id));
+    } catch (BackendException ignored) {
+      model.addAttribute("photos", List.of());
+    }
     return "admin/animals/form";
   }
 
@@ -115,6 +124,54 @@ public class AdminAnimalController {
       populateForm(model, id);
       return "admin/animals/form";
     }
+  }
+
+  @PostMapping("/{id}/photos")
+  public String uploadPhoto(
+    @PathVariable UUID id,
+    @RequestParam("file") MultipartFile file,
+    RedirectAttributes flash
+  ) {
+    if (file.isEmpty()) {
+      flash.addFlashAttribute("error", "Choose an image file before uploading.");
+      return "redirect:/admin/animals/" + id + "/edit#photos";
+    }
+    try {
+      byte[] bytes = file.getBytes();
+      String contentType = file.getContentType();
+      if (contentType == null || !contentType.startsWith("image/")) {
+        flash.addFlashAttribute("error", "Only image files are allowed.");
+        return "redirect:/admin/animals/" + id + "/edit#photos";
+      }
+      String filename = file.getOriginalFilename();
+      animals.uploadPhoto(
+        id,
+        filename == null || filename.isBlank() ? "upload" : filename,
+        contentType,
+        bytes
+      );
+      flash.addFlashAttribute("success", "Photo uploaded.");
+    } catch (IOException ex) {
+      flash.addFlashAttribute("error", "Could not read the uploaded file.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/animals/" + id + "/edit#photos";
+  }
+
+  @PostMapping("/{id}/photos/{photoId}/delete")
+  public String deletePhoto(
+    @PathVariable UUID id,
+    @PathVariable UUID photoId,
+    RedirectAttributes flash
+  ) {
+    try {
+      animals.deletePhoto(id, photoId);
+      flash.addFlashAttribute("success", "Photo removed.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/animals/" + id + "/edit#photos";
   }
 
   @PostMapping("/{id}/medical-records")

@@ -145,6 +145,50 @@
         </div>
     </div>
 
+    <section th:if="${animalId != null}" id="photos" class="card shadow-sm mt-4">
+        <div class="card-body">
+            <h2 class="h5 mb-3"><i class="bi bi-images me-2"></i>Photos</h2>
+
+            <div th:if="${#lists.isEmpty(photos)}" class="alert alert-light border mb-3">
+                No photos yet.
+            </div>
+
+            <div th:unless="${#lists.isEmpty(photos)}" class="row g-2 mb-3">
+                <div th:each="p : ${photos}" class="col-6 col-md-4 col-lg-3">
+                    <div class="position-relative">
+                        <img th:src="@{/animals/{aid}/photos/{pid}(aid=${animalId},pid=${p.id()})}"
+                             alt="Animal photo"
+                             class="img-fluid rounded border"
+                             style="aspect-ratio: 1 / 1; object-fit: cover; width: 100%"/>
+                        <form th:action="@{/admin/animals/{aid}/photos/{pid}/delete(aid=${animalId},pid=${p.id()})}"
+                              method="post"
+                              class="position-absolute top-0 end-0 m-1">
+                            <button type="submit"
+                                    class="btn btn-sm btn-danger"
+                                    title="Remove photo"
+                                    onclick="return confirm('Remove this photo?');">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <form th:action="@{/admin/animals/{id}/photos(id=${animalId})}"
+                  method="post" enctype="multipart/form-data" class="row g-2 align-items-end">
+                <div class="col-md-9">
+                    <label class="form-label" for="photoFile">Add a photo</label>
+                    <input id="photoFile" type="file" name="file" accept="image/*" required class="form-control"/>
+                </div>
+                <div class="col-md-3">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-upload me-1"></i>Upload
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+
 </section>
 </th:block>
 </body>

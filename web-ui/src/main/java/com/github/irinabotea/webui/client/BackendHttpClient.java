@@ -6,9 +6,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import org.jspecify.annotations.Nullable;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -87,6 +92,69 @@ public class BackendHttpClient {
       throw translate(ex);
     }
   }
+
+  public void delete(String path) {
+    try {
+      http.delete().uri(path).headers(this::addAuth).retrieve().toBodilessEntity();
+    } catch (RestClientResponseException ex) {
+      throw translate(ex);
+    }
+  }
+
+  public <T> T postMultipart(
+    String path,
+    String partName,
+    String filename,
+    String contentType,
+    byte[] data,
+    Class<T> type
+  ) {
+    MultiValueMap<String, HttpEntity<?>> parts = new LinkedMultiValueMap<>();
+    HttpHeaders partHeaders = new HttpHeaders();
+    partHeaders.setContentType(MediaType.parseMediaType(contentType));
+    partHeaders.setContentDispositionFormData(partName, filename);
+    ByteArrayResource resource = new ByteArrayResource(data) {
+      @Override
+      public String getFilename() {
+        return filename;
+      }
+    };
+    parts.add(partName, new HttpEntity<>(resource, partHeaders));
+    try {
+      T result = http
+        .post()
+        .uri(path)
+        .contentType(MediaType.MULTIPART_FORM_DATA)
+        .headers(this::addAuth)
+        .body(parts)
+        .retrieve()
+        .body(type);
+      return require(result);
+    } catch (RestClientResponseException ex) {
+      throw translate(ex);
+    }
+  }
+
+  public BytesResponse getBytes(String path) {
+    try {
+      ResponseEntity<byte[]> entity = http
+        .get()
+        .uri(path)
+        .headers(this::addAuth)
+        .retrieve()
+        .toEntity(byte[].class);
+      MediaType ct = entity.getHeaders().getContentType();
+      byte[] body = entity.getBody();
+      return new BytesResponse(
+        body == null ? new byte[0] : body,
+        ct == null ? MediaType.APPLICATION_OCTET_STREAM_VALUE : ct.toString()
+      );
+    } catch (RestClientResponseException ex) {
+      throw translate(ex);
+    }
+  }
+
+  public record BytesResponse(byte[] bytes, String contentType) {}
 
   private <T> T doPost(String path, Object body, Class<T> type, boolean withAuth) {
     try {

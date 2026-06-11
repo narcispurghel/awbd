@@ -168,6 +168,14 @@ public final class BackendDtos {
       boolean followUpRequired
     ) {}
 
+    public record AnimalPhotoView(
+      UUID id,
+      UUID animalId,
+      String contentType,
+      int sortOrder,
+      Instant createdAt
+    ) {}
+
     public record UpsertMedicalRecordRequest(
       String title,
       LocalDate examinationDate,
