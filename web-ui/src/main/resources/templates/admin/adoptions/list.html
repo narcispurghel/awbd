@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('Admin · Adoption requests', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item"><a th:href="@{/admin}">Admin</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Adoption requests</li>
+        </ol>
+    </nav>
+
+    <h1 class="h3 mb-3">Adoption requests</h1>
+
+    <form th:action="@{/admin/adoptions}" method="get" class="row g-2 mb-3">
+        <div class="col-md-4">
+            <label class="form-label small text-muted mb-1" for="status">Status</label>
+            <select id="status" name="status" class="form-select">
+                <option value="">All statuses</option>
+                <option th:each="s : ${statuses}"
+                        th:value="${s}"
+                        th:text="${s.name()}"
+                        th:selected="${selectedStatus == s}">STATUS</option>
+            </select>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label small text-muted mb-1" for="animalId">Animal</label>
+            <select id="animalId" name="animalId" class="form-select">
+                <option value="">All animals</option>
+                <option th:each="a : ${animalOptions}"
+                        th:value="${a.id}"
+                        th:text="${a.name}"
+                        th:selected="${selectedAnimalId != null and selectedAnimalId == a.id}">Animal</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex align-items-end gap-2">
+            <button type="submit" class="btn btn-primary flex-grow-1">
+                <i class="bi bi-funnel me-1"></i>Filter
+            </button>
+            <a th:href="@{/admin/adoptions}" class="btn btn-outline-secondary" title="Reset">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+    </form>
+
+    <div th:if="${#lists.isEmpty(requests)}" class="alert alert-light border text-center mb-0">
+        No adoption requests match these filters.
+    </div>
+
+    <div th:unless="${#lists.isEmpty(requests)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Status</th>
+                    <th>Adopter</th>
+                    <th>Requested</th>
+                    <th>Last update</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="r : ${requests}" th:with="a=${animalIndex.get(r.animalId())}">
+                    <td>
+                        <a th:if="${a != null}"
+                           th:href="@{/animals/{id}(id=${r.animalId()})}"
+                           th:text="${a.name()}">Animal</a>
+                        <span th:if="${a == null}" class="text-muted small font-monospace"
+                              th:text="${r.animalId()}">UUID</span>
+                    </td>
+                    <td>
+                        <span th:text="${r.status()}"
+                              th:class="${'badge ' + (r.status().name() == 'APPROVED' ? 'text-bg-success'
+                                                : (r.status().name() == 'PENDING'  ? 'text-bg-warning'
+                                                : (r.status().name() == 'REJECTED' ? 'text-bg-danger'
+                                                : 'text-bg-secondary')))}">Status</span>
+                    </td>
+                    <td>
+                        <span class="text-muted small font-monospace" th:text="${r.adopterId()}">adopter</span>
+                    </td>
+                    <td><small class="text-muted" th:text="${r.createdAt()}">created</small></td>
+                    <td><small class="text-muted" th:text="${r.updatedAt()}">updated</small></td>
+                    <td class="text-end">
+                        <a th:href="@{/admin/adoptions/{id}(id=${r.id()})}"
+                           class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-eye me-1"></i>Review
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>

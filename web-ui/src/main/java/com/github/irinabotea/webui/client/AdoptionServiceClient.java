@@ -2,8 +2,10 @@ package com.github.irinabotea.webui.client;
 
 import java.util.List;
 import java.util.UUID;
+import org.jspecify.annotations.Nullable;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 /** REST client for adoption-service (adoption requests, status, review actions). */
 @Service
@@ -29,6 +31,16 @@ public class AdoptionServiceClient {
 
   public List<BackendDtos.AdoptionDtos.AdoptionRequestView> mine() {
     return http.get("/api/v1/adoptions", REQUEST_LIST);
+  }
+
+  public List<BackendDtos.AdoptionDtos.AdoptionRequestView> list(
+    BackendDtos.AdoptionDtos.@Nullable AdoptionRequestStatus status,
+    @Nullable UUID animalId
+  ) {
+    UriComponentsBuilder b = UriComponentsBuilder.fromPath("/api/v1/adoptions");
+    if (status != null) b.queryParam("status", status.name());
+    if (animalId != null) b.queryParam("animalId", animalId.toString());
+    return http.get(b.build().toUriString(), REQUEST_LIST);
   }
 
   public void cancel(UUID id) {
