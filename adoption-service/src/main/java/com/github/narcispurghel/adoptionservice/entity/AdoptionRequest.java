@@ -39,6 +39,10 @@ public class AdoptionRequest {
   @Column(name = "review_note", length = 2000)
   private String reviewNote;
 
+  @Nullable
+  @Column(length = 1000)
+  private String note;
+
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
@@ -108,6 +112,14 @@ public class AdoptionRequest {
 
   public void setReviewNote(@Nullable String reviewNote) {
     this.reviewNote = reviewNote;
+  }
+
+  public @Nullable String getNote() {
+    return note;
+  }
+
+  public void setNote(@Nullable String note) {
+    this.note = note;
   }
 
   public Instant getCreatedAt() {

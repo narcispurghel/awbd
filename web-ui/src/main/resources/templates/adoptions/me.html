@@ -27,6 +27,7 @@
                     <th>Status</th>
                     <th>Requested</th>
                     <th>Last update</th>
+                    <th>Your note</th>
                     <th>Review note</th>
                     <th class="text-end">Actions</th>
                 </tr>
@@ -49,7 +50,10 @@
                     </td>
                     <td><small class="text-muted" th:text="${r.createdAt()}">created</small></td>
                     <td><small class="text-muted" th:text="${r.updatedAt()}">updated</small></td>
-                    <td th:text="${r.reviewNote()} ?: '—'">note</td>
+                    <td style="white-space: pre-line; max-width: 18rem"
+                        th:text="${r.note()} ?: '—'">your note</td>
+                    <td style="white-space: pre-line; max-width: 18rem"
+                        th:text="${r.reviewNote()} ?: '—'">review note</td>
                     <td class="text-end">
                         <button th:if="${r.status().name() == 'PENDING'}"
                                 type="button"

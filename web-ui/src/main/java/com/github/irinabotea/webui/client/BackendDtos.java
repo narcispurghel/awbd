@@ -190,7 +190,7 @@ public final class BackendDtos {
       CANCELLED,
     }
 
-    public record CreateAdoptionRequest(UUID animalId) {}
+    public record CreateAdoptionRequest(UUID animalId, @Nullable String note) {}
 
     public record ReviewAdoptionRequest(
       AdoptionRequestStatus status,
@@ -204,6 +204,7 @@ public final class BackendDtos {
       AdoptionRequestStatus status,
       @Nullable UUID reviewedBy,
       @Nullable String reviewNote,
+      @Nullable String note,
       Instant createdAt,
       Instant updatedAt
     ) {}

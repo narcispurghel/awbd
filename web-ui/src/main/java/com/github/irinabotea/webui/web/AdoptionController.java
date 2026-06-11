@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -31,15 +32,23 @@ public class AdoptionController {
   }
 
   @PostMapping("/request/{animalId}")
-  public String request(@PathVariable UUID animalId, RedirectAttributes flash) {
+  public String request(
+    @PathVariable UUID animalId,
+    @RequestParam(name = "note", required = false) @Nullable String note,
+    RedirectAttributes flash
+  ) {
     try {
-      adoptions.requestAdoption(animalId);
+      adoptions.requestAdoption(animalId, blankToNull(note));
       flash.addFlashAttribute("success", "Adoption request submitted.");
       return "redirect:/adoptions/me";
     } catch (BackendException ex) {
       flash.addFlashAttribute("error", ex.safeMessage());
       return "redirect:/animals/" + animalId;
     }
+  }
+
+  private static @Nullable String blankToNull(@Nullable String s) {
+    return (s == null || s.isBlank()) ? null : s.trim();
   }
 
   @PostMapping("/{id}/cancel")

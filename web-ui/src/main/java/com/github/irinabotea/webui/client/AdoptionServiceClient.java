@@ -21,10 +21,10 @@ public class AdoptionServiceClient {
     this.http = http;
   }
 
-  public BackendDtos.AdoptionDtos.AdoptionRequestView requestAdoption(UUID animalId) {
+  public BackendDtos.AdoptionDtos.AdoptionRequestView requestAdoption(UUID animalId, @Nullable String note) {
     return http.post(
       "/api/v1/adoptions",
-      new BackendDtos.AdoptionDtos.CreateAdoptionRequest(animalId),
+      new BackendDtos.AdoptionDtos.CreateAdoptionRequest(animalId, note),
       BackendDtos.AdoptionDtos.AdoptionRequestView.class
     );
   }

@@ -78,6 +78,7 @@ public class AdoptionRequestService {
     request.setStatus(AdoptionRequestStatus.PENDING);
     request.setReviewedBy(null);
     request.setReviewNote(null);
+    request.setNote(normalizeNote(body.note()));
     AdoptionRequest saved = adoptionRequestRepository.save(request);
     eventPublisher.publishEvent(
       new AdoptionSubmitted(
@@ -220,6 +221,14 @@ public class AdoptionRequestService {
     return trimmed.isEmpty() ? null : trimmed;
   }
 
+  private @Nullable String normalizeNote(@Nullable String note) {
+    if (note == null) {
+      return null;
+    }
+    String trimmed = note.trim();
+    return trimmed.isEmpty() ? null : trimmed;
+  }
+
   private AdoptionDtos.AdoptionRequestView toView(AdoptionRequest request) {
     return new AdoptionDtos.AdoptionRequestView(
       request.getId(),
@@ -228,6 +237,7 @@ public class AdoptionRequestService {
       request.getStatus(),
       request.getReviewedBy(),
       request.getReviewNote(),
+      request.getNote(),
       request.getCreatedAt(),
       request.getUpdatedAt()
     );

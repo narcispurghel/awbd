@@ -81,14 +81,22 @@
                     <a th:href="@{/adoptions/me}" class="alert-link">View my adoptions</a>.
                 </div>
                 <th:block th:if="${existingPendingRequest == null}">
-                    <form th:action="@{/adoptions/request/{id}(id=${animal.id})}" method="post" class="d-inline">
+                    <form th:action="@{/adoptions/request/{id}(id=${animal.id})}" method="post">
+                        <div class="mb-2">
+                            <label class="form-label" for="adoptionNote">
+                                Note to the shelter <span class="text-muted small">(optional)</span>
+                            </label>
+                            <textarea id="adoptionNote" name="note" rows="3" maxlength="1000"
+                                      class="form-control"
+                                      placeholder="Tell us why you'd be a great fit for this animal."></textarea>
+                        </div>
                         <button type="submit" class="btn btn-success">
                             <i class="bi bi-heart-fill me-1"></i>Request adoption
                         </button>
+                        <small class="text-muted ms-2">
+                            You'll be able to track this request in <a th:href="@{/adoptions/me}">My adoptions</a>.
+                        </small>
                     </form>
-                    <small class="text-muted ms-2">
-                        You'll be able to track this request in <a th:href="@{/adoptions/me}">My adoptions</a>.
-                    </small>
                 </th:block>
             </div>
 

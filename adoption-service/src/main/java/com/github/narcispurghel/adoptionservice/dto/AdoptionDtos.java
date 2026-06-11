@@ -11,7 +11,10 @@ public final class AdoptionDtos {
 
   private AdoptionDtos() {}
 
-  public record CreateAdoptionRequest(@NotNull UUID animalId) {}
+  public record CreateAdoptionRequest(
+    @NotNull UUID animalId,
+    @Nullable @Size(max = 1000) String note
+  ) {}
 
   public record ReviewAdoptionRequest(
     @NotNull AdoptionRequestStatus status,
@@ -25,6 +28,7 @@ public final class AdoptionDtos {
     AdoptionRequestStatus status,
     @Nullable UUID reviewedBy,
     @Nullable String reviewNote,
+    @Nullable String note,
     Instant createdAt,
     Instant updatedAt
   ) {}

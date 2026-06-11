@@ -36,13 +36,27 @@
                 </dd>
 
                 <dt class="col-sm-3">Adopter</dt>
-                <dd class="col-sm-9 small font-monospace text-muted" th:text="${request.adopterId()}">adopter</dd>
+                <dd class="col-sm-9">
+                    <a th:if="${adopter != null and adopter.profile() != null}"
+                       th:href="@{/admin/users/{id}(id=${request.adopterId()})}"
+                       th:text="${adopter.profile().firstName() + ' ' + adopter.profile().lastName()}">First Last</a>
+                    <a th:if="${adopter != null and adopter.profile() == null}"
+                       th:href="@{/admin/users/{id}(id=${request.adopterId()})}"
+                       th:text="${adopter.email()}">email</a>
+                    <span th:if="${adopter == null}" class="text-muted small font-monospace"
+                          th:text="${request.adopterId()}">adopter</span>
+                </dd>
 
                 <dt class="col-sm-3">Requested</dt>
                 <dd class="col-sm-9 small text-muted" th:text="${request.createdAt()}">created</dd>
 
                 <dt class="col-sm-3">Last update</dt>
                 <dd class="col-sm-9 small text-muted" th:text="${request.updatedAt()}">updated</dd>
+
+                <th:block th:if="${request.note() != null}">
+                    <dt class="col-sm-3">Adopter note</dt>
+                    <dd class="col-sm-9" style="white-space: pre-line" th:text="${request.note()}">note</dd>
+                </th:block>
 
                 <th:block th:if="${request.reviewedBy() != null}">
                     <dt class="col-sm-3">Reviewed by</dt>
