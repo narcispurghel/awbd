@@ -8,5 +8,16 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 12MB
 cors:
   allowed-origins: http://localhost:8090
+storage:
+  s3:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    region: ${MINIO_REGION:us-east-1}
+    access-key: ${MINIO_ROOT_USER:minioadmin}
+    secret-key: ${MINIO_ROOT_PASSWORD:minioadmin}
+    bucket: ${MINIO_BUCKET:animal-photos}

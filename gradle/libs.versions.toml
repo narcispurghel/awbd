@@ -13,6 +13,7 @@ webjars-locator = "1.0.0"
 webjars-bootstrap = "5.3.3"
 webjars-bootstrap-icons = "1.11.3"
 testcontainers = "1.21.4"
+aws-sdk = "2.27.7"
 
 [libraries]
 spring-boot-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
@@ -44,6 +45,8 @@ webjars-locator = { module = "org.webjars:webjars-locator-lite", version.ref = "
 webjars-bootstrap = { module = "org.webjars:bootstrap", version.ref = "webjars-bootstrap" }
 webjars-bootstrap-icons = { module = "org.webjars.npm:bootstrap-icons", version.ref = "webjars-bootstrap-icons" }
 spring-data-redis = { module = "org.springframework.boot:spring-boot-starter-data-redis" }
+aws-sdk-bom = { module = "software.amazon.awssdk:bom", version.ref = "aws-sdk" }
+aws-sdk-s3 = { module = "software.amazon.awssdk:s3" }
 
 [plugins]
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }

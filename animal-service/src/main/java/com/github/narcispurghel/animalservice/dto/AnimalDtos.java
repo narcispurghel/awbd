@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
@@ -110,5 +111,13 @@ public final class AnimalDtos {
     @Nullable @Size(max = 2000) String notes,
     @Nullable @DecimalMin("0.0") BigDecimal weightKg,
     boolean followUpRequired
+  ) {}
+
+  public record AnimalPhotoView(
+    UUID id,
+    UUID animalId,
+    String contentType,
+    int sortOrder,
+    Instant createdAt
   ) {}
 }

@@ -30,6 +30,7 @@ dependencies {
     implementation(libs.spring.boot.security)
     implementation(libs.spring.cloud.eureka.client)
     implementation(libs.dotenv.java)
+    implementation(libs.aws.sdk.s3)
     runtimeOnly(libs.postgresql)
     testImplementation(libs.spring.boot.data.jpa.test)
     testImplementation(libs.spring.boot.validation.test)
@@ -45,6 +46,7 @@ dependencies {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+        mavenBom("software.amazon.awssdk:bom:${libs.versions.aws.sdk.get()}")
     }
 }
 
