@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:replace="~{layout/base :: layout('My adoptions', ~{::content})}">
+<section th:fragment="content">
+
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item active" aria-current="page">My adoptions</li>
+        </ol>
+    </nav>
+
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <h1 class="h3 mb-3">My adoption requests</h1>
+
+    <div th:if="${#lists.isEmpty(rows)}" class="alert alert-light border text-center">
+        <p class="mb-2">You haven't requested any adoptions yet.</p>
+        <a th:href="@{/animals}" class="btn btn-primary">
+            <i class="bi bi-search me-1"></i>Browse animals
+        </a>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(rows)}" class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th>Animal</th>
+                    <th>Status</th>
+                    <th>Requested</th>
+                    <th>Last update</th>
+                    <th>Review note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="row : ${rows}" th:with="r=${row.request()}, a=${row.animal()}">
+                    <td>
+                        <a th:if="${a != null}"
+                           th:href="@{/animals/{id}(id=${r.animalId()})}"
+                           th:text="${a.name()}">Animal</a>
+                        <span th:if="${a == null}" class="text-muted small"
+                              th:text="${r.animalId()}">UUID</span>
+                    </td>
+                    <td>
+                        <span th:text="${r.status()}"
+                              th:class="${'badge ' + (r.status().name() == 'APPROVED' ? 'text-bg-success'
+                                                : (r.status().name() == 'PENDING'  ? 'text-bg-warning'
+                                                : (r.status().name() == 'REJECTED' ? 'text-bg-danger'
+                                                : 'text-bg-secondary')))}">Status</span>
+                    </td>
+                    <td><small class="text-muted" th:text="${r.createdAt()}">created</small></td>
+                    <td><small class="text-muted" th:text="${r.updatedAt()}">updated</small></td>
+                    <td th:text="${r.reviewNote()} ?: '—'">note</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</section>
+</th:block>
+</body>
+</html>
