@@ -33,10 +33,13 @@ public class SecurityConfig {
             "/",
             "/login",
             "/register",
+            "/animals",
+            "/animals/**",
             "/css/**",
             "/js/**",
             "/webjars/**",
             "/error",
+            "/error/**",
             "/favicon.ico"
           )
           .permitAll()

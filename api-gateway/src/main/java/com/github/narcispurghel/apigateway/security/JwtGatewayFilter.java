@@ -42,7 +42,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
   @Override
   protected boolean shouldNotFilter(HttpServletRequest request) {
     String path = request.getRequestURI();
-    return !path.startsWith(API_PREFIX) || isPublicAuth(request, path);
+    return !path.startsWith(API_PREFIX) || isPublicAuth(request, path) || isPublicCatalog(request, path);
   }
 
   @Override
@@ -81,6 +81,16 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
       return false;
     }
     return path.equals("/api/v1/auth/login") || path.equals("/api/v1/auth/register");
+  }
+
+  private static boolean isPublicCatalog(HttpServletRequest request, String path) {
+    if (!HttpMethod.GET.matches(request.getMethod())) {
+      return false;
+    }
+    return path.startsWith("/api/v1/animals")
+      || path.startsWith("/api/v1/shelters")
+      || path.startsWith("/api/v1/species")
+      || path.startsWith("/api/v1/breeds");
   }
 
   private static @Nullable String extractBearer(HttpServletRequest request) {

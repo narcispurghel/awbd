@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -37,8 +38,14 @@ class SecurityConfig {
     return http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
       .csrf(AbstractHttpConfigurer::disable)
-      .anonymous(AbstractHttpConfigurer::disable)
-      .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated())
+      .authorizeHttpRequests(authorize ->
+        authorize
+          .requestMatchers(HttpMethod.GET, "/api/v1/animals/**").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/v1/shelters/**").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/v1/species/**").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/v1/breeds/**").permitAll()
+          .anyRequest().authenticated()
+      )
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .addFilterBefore(gatewayIdentityFilter, UsernamePasswordAuthenticationFilter.class)
       .exceptionHandling(exConfigurer ->
