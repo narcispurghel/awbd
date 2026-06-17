@@ -19,8 +19,47 @@
     <th:block th:replace="${body}"></th:block>
 </main>
 
-<footer class="border-top py-3 text-center text-body-secondary small">
-    <span>&copy; PAWS · Animal Adoption Platform</span>
+<footer class="site-footer border-top mt-auto">
+    <div class="container py-4 py-md-5">
+        <div class="row g-4 align-items-start">
+            <div class="col-12 col-lg-5">
+                <a class="site-footer__brand d-inline-flex align-items-center gap-2 text-decoration-none mb-2"
+                   th:href="@{/}">
+                    <i class="bi bi-heart-fill"></i>
+                    <span class="fw-semibold">PAWS</span>
+                </a>
+                <p class="site-footer__blurb mb-0">
+                    Browse adoptable animals, manage requests, and keep your profile ready for a new home match.
+                </p>
+            </div>
+
+            <div class="col-12 col-lg-7">
+                <div class="row g-4 row-cols-1 row-cols-sm-2">
+                    <div class="col">
+                        <h2 class="site-footer__heading">Explore</h2>
+                        <ul class="site-footer__links list-unstyled mb-0">
+                            <li><a th:href="@{/}">Home</a></li>
+                            <li><a th:href="@{/animals}">Animals</a></li>
+                            <li><a th:href="@{/adoptions/me}">My adoptions</a></li>
+                        </ul>
+                    </div>
+                    <div class="col">
+                        <h2 class="site-footer__heading">Account</h2>
+                        <ul class="site-footer__links list-unstyled mb-0">
+                            <li><a th:href="@{/profile}">Profile</a></li>
+                            <li><a th:href="@{/login}">Log in</a></li>
+                            <li><a th:href="@{/register}">Register</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="site-footer__meta border-top pt-3 mt-4 d-flex flex-column flex-md-row justify-content-between gap-2">
+            <span>&copy; PAWS. All rights reserved.</span>
+            <span>Animal adoption platform for browsing, tracking, and applying in one place.</span>
+        </div>
+    </div>
 </footer>
 
 <script th:src="@{/webjars/bootstrap/js/bootstrap.bundle.min.js}"></script>

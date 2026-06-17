@@ -4,104 +4,236 @@
 <body>
 <th:block th:replace="~{layout/base :: layout('Home', ~{::content})}">
 <section th:fragment="content">
+    <div class="container py-5">
+        <div class="row align-items-center g-4 g-lg-5 py-3 py-lg-4">
+            <div class="col-lg-7">
+                <span class="badge rounded-pill text-bg-light border text-body-secondary px-3 py-2 mb-3">
+                    <i class="bi bi-shield-check text-success me-1"></i>Trusted adoption network
+                </span>
+                <h1 class="display-4 fw-semibold mb-3">Find a friend for life</h1>
+                <p class="lead text-body-secondary mb-4">
+                    PAWS connects loving adopters with shelters across Romania and Moldova,
+                    keeping the discovery and request process simple, transparent, and focused on the animal.
+                </p>
 
-    <div class="text-center py-5">
-        <h1 class="display-4 fw-semibold">Find a friend for life</h1>
-        <p class="lead text-body-secondary">
-            PAWS connects loving adopters with shelters across Romania and Moldova.
-        </p>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="badge rounded-pill text-bg-light border text-body-secondary px-3 py-2">
+                        <i class="bi bi-person-check me-1"></i>No account needed to browse
+                    </span>
+                    <span class="badge rounded-pill text-bg-light border text-body-secondary px-3 py-2">
+                        <i class="bi bi-house-heart me-1"></i>Shelter-first listings
+                    </span>
+                    <span class="badge rounded-pill text-bg-light border text-body-secondary px-3 py-2">
+                        <i class="bi bi-shield-lock me-1"></i>Clear, secure requests
+                    </span>
+                    <span class="badge rounded-pill text-bg-light border text-body-secondary px-3 py-2">
+                        <i class="bi bi-geo-alt me-1"></i>Romania and Moldova
+                    </span>
+                </div>
 
-        <div sec:authorize="!isAuthenticated()" class="d-flex justify-content-center gap-2 mt-4">
-            <a th:href="@{/animals}" class="btn btn-primary btn-lg">
-                <i class="bi bi-search-heart me-1"></i>Browse animals
-            </a>
-            <a th:href="@{/register}" class="btn btn-outline-secondary btn-lg">
-                <i class="bi bi-person-plus me-1"></i>Create an account
-            </a>
-        </div>
-
-        <div sec:authorize="isAuthenticated()" class="mt-4">
-            <p class="h5 text-body-secondary mb-3">
-                Welcome back, <span sec:authentication="name">user</span>.
-            </p>
-            <div class="d-flex justify-content-center gap-2">
-                <a th:href="@{/animals}" class="btn btn-primary btn-lg">
-                    <i class="bi bi-search-heart me-1"></i>Browse animals
-                </a>
-                <a th:href="@{/profile}" class="btn btn-outline-secondary btn-lg">
-                    <i class="bi bi-person me-1"></i>My profile
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <th:block th:if="${not #lists.isEmpty(carouselAnimals)}">
-        <h2 class="h4 text-center mb-3">
-            <i class="bi bi-stars text-warning me-1"></i>Available right now
-        </h2>
-        <p class="text-center text-body-secondary mb-4">
-            <span th:text="${#lists.size(carouselAnimals)}">0</span>
-            adoptable animals waiting for a home — tap one to learn more.
-        </p>
-
-        <div class="animal-marquee mb-5">
-            <div class="animal-marquee__track">
-                <!-- Two copies for a seamless infinite scroll. -->
-                <th:block th:each="copy : ${ {1, 2} }">
-                    <a th:each="a : ${carouselAnimals}"
-                       th:href="@{/animals/{id}(id=${a.id})}"
-                       class="animal-card text-decoration-none text-reset">
-                        <div class="animal-card__photo">
-                            <img th:if="${firstPhotoByAnimal.get(a.id) != null}"
-                                 th:src="@{/animals/{aid}/photos/{pid}(aid=${a.id},pid=${firstPhotoByAnimal.get(a.id)})}"
-                                 th:alt="${a.name}"
-                                 loading="lazy"/>
-                            <div th:unless="${firstPhotoByAnimal.get(a.id) != null}"
-                                 class="animal-card__placeholder">
-                                <i class="bi bi-image"></i>
-                            </div>
-                            <span class="badge text-bg-success animal-card__badge">
-                                <i class="bi bi-heart-fill me-1"></i>Available
-                            </span>
-                        </div>
-                        <div class="animal-card__body">
-                            <div class="animal-card__name" th:text="${a.name}">Name</div>
-                            <div class="animal-card__meta">
-                                <span th:text="${a.speciesName}">Species</span>
-                                <span th:if="${a.breedName != null}"
-                                      th:text="| · ${a.breedName}|"></span>
-                            </div>
-                            <div class="animal-card__shelter">
-                                <i class="bi bi-house-heart me-1"></i><span th:text="${a.shelterName}">Shelter</span>
-                            </div>
-                        </div>
+                <div sec:authorize="!isAuthenticated()" class="d-flex flex-wrap gap-2">
+                    <a th:href="@{/animals}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-search-heart me-1"></i>Browse animals
                     </a>
-                </th:block>
+                    <a th:href="@{/register}" class="btn btn-outline-secondary btn-lg">
+                        <i class="bi bi-person-plus me-1"></i>Create an account
+                    </a>
+                </div>
+
+                <div sec:authorize="isAuthenticated()" class="mt-4">
+                    <p class="h5 text-body-secondary mb-3">
+                        Welcome back, <span sec:authentication="name">user</span>.
+                    </p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a th:href="@{/animals}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search-heart me-1"></i>Browse animals
+                        </a>
+                        <a th:href="@{/profile}" class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-person me-1"></i>My profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5">
+                <div class="card shadow-sm border-0 bg-body-tertiary">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center justify-content-between mb-4">
+                            <div>
+                                <p class="text-uppercase small fw-semibold text-body-secondary mb-1">What to expect</p>
+                                <h2 class="h4 mb-0">A simpler path to adoption</h2>
+                            </div>
+                            <i class="bi bi-heart-fill text-danger fs-3"></i>
+                        </div>
+
+                        <div class="vstack gap-3">
+                            <div class="d-flex gap-3">
+                                <div class="flex-shrink-0 rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">
+                                    <i class="bi bi-search-heart"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h6 mb-1">Discover animals with context</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        Browse names, species, breeds, shelters, and photos in one place.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <div class="flex-shrink-0 rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">
+                                    <i class="bi bi-clipboard2-heart"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h6 mb-1">Send a request when you are ready</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        Create an account, share your interest, and keep everything in one profile.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <div class="flex-shrink-0 rounded-circle bg-primary-subtle text-primary d-inline-flex align-items-center justify-content-center" style="width: 2.5rem; height: 2.5rem;">
+                                    <i class="bi bi-house-heart"></i>
+                                </div>
+                                <div>
+                                    <h3 class="h6 mb-1">Connect with a shelter</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        Shelter volunteers review the request and follow up with the next steps.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="text-center mb-5">
-            <a th:href="@{/animals}" class="btn btn-outline-primary">
-                See all animals <i class="bi bi-arrow-right ms-1"></i>
-            </a>
-        </div>
-    </th:block>
+        <th:block th:if="${not #lists.isEmpty(carouselAnimals)}">
+            <div class="d-flex flex-column flex-md-row align-items-md-end justify-content-between gap-2 mb-3 mt-4">
+                <div>
+                    <h2 class="h4 mb-1">
+                        <i class="bi bi-stars text-warning me-1"></i>Available right now
+                    </h2>
+                    <p class="text-body-secondary mb-0">
+                        <span th:text="${#lists.size(carouselAnimals)}">0</span>
+                        adoptable animals waiting for a home, highlighted in a live carousel.
+                    </p>
+                </div>
+                <p class="text-body-secondary mb-0">
+                    Tap any card to see details and start the next step.
+                </p>
+            </div>
 
-    <div class="row g-4 text-center pb-4">
-        <div class="col-md-4">
-            <i class="bi bi-search-heart display-5 text-primary"></i>
-            <h3 class="h6 mt-2">Browse</h3>
-            <p class="small text-body-secondary mb-0">Explore animals from shelters across the region — no account needed.</p>
-        </div>
-        <div class="col-md-4">
-            <i class="bi bi-clipboard2-heart display-5 text-primary"></i>
-            <h3 class="h6 mt-2">Apply</h3>
-            <p class="small text-body-secondary mb-0">Create an account and send an adoption request in a couple of clicks.</p>
-        </div>
-        <div class="col-md-4">
-            <i class="bi bi-house-heart display-5 text-primary"></i>
-            <h3 class="h6 mt-2">Welcome home</h3>
-            <p class="small text-body-secondary mb-0">A shelter volunteer reviews your request and reaches out to you.</p>
+            <div class="animal-marquee mb-4">
+                <div class="animal-marquee__track">
+                    <!-- Two copies for a seamless infinite scroll. -->
+                    <th:block th:each="copy : ${ {1, 2} }">
+                        <a th:each="a : ${carouselAnimals}"
+                           th:href="@{/animals/{id}(id=${a.id})}"
+                           class="animal-card text-decoration-none text-reset">
+                            <div class="animal-card__photo">
+                                <img th:if="${firstPhotoByAnimal.get(a.id) != null}"
+                                     th:src="@{/animals/{aid}/photos/{pid}(aid=${a.id},pid=${firstPhotoByAnimal.get(a.id)})}"
+                                     th:alt="${a.name}"
+                                     loading="lazy"/>
+                                <div th:unless="${firstPhotoByAnimal.get(a.id) != null}"
+                                     class="animal-card__placeholder">
+                                    <i class="bi bi-image"></i>
+                                </div>
+                                <span class="badge text-bg-success animal-card__badge">
+                                    <i class="bi bi-heart-fill me-1"></i>Available
+                                </span>
+                            </div>
+                            <div class="animal-card__body">
+                                <div class="animal-card__name" th:text="${a.name}">Name</div>
+                                <div class="animal-card__meta">
+                                    <span th:text="${a.speciesName}">Species</span>
+                                    <span th:if="${a.breedName != null}"
+                                          th:text="| · ${a.breedName}|"></span>
+                                </div>
+                                <div class="animal-card__shelter">
+                                    <i class="bi bi-house-heart me-1"></i><span th:text="${a.shelterName}">Shelter</span>
+                                </div>
+                            </div>
+                        </a>
+                    </th:block>
+                </div>
+            </div>
+
+            <div class="text-center mb-5">
+                <a th:href="@{/animals}" class="btn btn-outline-primary">
+                    See all animals <i class="bi bi-arrow-right ms-1"></i>
+                </a>
+            </div>
+        </th:block>
+
+        <div class="row g-4 align-items-stretch mb-4">
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="badge rounded-pill text-bg-light border text-body-secondary">How it works</span>
+                            <span class="text-body-secondary small">A quick path from browsing to request.</span>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="h-100">
+                                    <div class="display-6 fw-semibold text-primary mb-2">1</div>
+                                    <h3 class="h6 mb-2">Browse</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        Explore adoptable animals and open the ones that feel like a match.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="h-100">
+                                    <div class="display-6 fw-semibold text-primary mb-2">2</div>
+                                    <h3 class="h6 mb-2">Request</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        Sign in, share your interest, and submit an adoption request.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="h-100">
+                                    <div class="display-6 fw-semibold text-primary mb-2">3</div>
+                                    <h3 class="h6 mb-2">Connect</h3>
+                                    <p class="small text-body-secondary mb-0">
+                                        A shelter volunteer reviews your request and follows up with next steps.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body p-4 p-lg-5">
+                        <span class="badge rounded-pill text-bg-light border text-body-secondary mb-3">Why PAWS</span>
+                        <h2 class="h4 mb-3">Designed to keep the adoption journey clear.</h2>
+                        <p class="text-body-secondary mb-4">
+                            We keep the experience focused on trustworthy listings, easy discovery,
+                            and a single place to manage the next step when you are ready.
+                        </p>
+                        <ul class="list-unstyled vstack gap-2 mb-0">
+                            <li class="d-flex gap-2">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                <span>Browse first, register only when you want to apply.</span>
+                            </li>
+                            <li class="d-flex gap-2">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                <span>See shelter and animal details together without extra clicks.</span>
+                            </li>
+                            <li class="d-flex gap-2">
+                                <i class="bi bi-check2-circle text-success"></i>
+                                <span>Track your adoption activity from your account.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </section>

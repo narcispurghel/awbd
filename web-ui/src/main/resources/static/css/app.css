@@ -2,6 +2,50 @@
 .navbar-brand .bi-heart-fill { font-size: 1.1rem; }
 main { max-width: 1100px; }
 
+/* --- Site footer --- */
+.site-footer {
+  background: var(--bs-body-bg);
+}
+.site-footer__brand {
+  color: var(--bs-body-color);
+}
+.site-footer__brand .bi {
+  color: var(--bs-primary);
+  font-size: 1.05rem;
+}
+.site-footer__brand:hover {
+  color: var(--bs-body-color);
+}
+.site-footer__blurb,
+.site-footer__meta {
+  color: var(--bs-secondary-color);
+  font-size: 0.95rem;
+}
+.site-footer__heading {
+  color: var(--bs-body-color);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+.site-footer__links {
+  display: grid;
+  gap: 0.4rem;
+}
+.site-footer__links a {
+  color: var(--bs-secondary-color);
+  text-decoration: none;
+  transition: color 0.15s ease, text-decoration-color 0.15s ease;
+}
+.site-footer__links a:hover,
+.site-footer__links a:focus-visible {
+  color: var(--bs-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.18em;
+}
+
 /* --- Landing page animal marquee --- */
 .animal-marquee {
   position: relative;
