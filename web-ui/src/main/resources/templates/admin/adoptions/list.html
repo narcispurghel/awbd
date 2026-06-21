@@ -14,7 +14,7 @@
     <h1 class="h3 mb-3">Adoption requests</h1>
 
     <form th:action="@{/admin/adoptions}" method="get" class="row g-2 mb-3">
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label small text-muted mb-1" for="status">Status</label>
             <select id="status" name="status" class="form-select">
                 <option value="">All statuses</option>
@@ -24,7 +24,7 @@
                         th:selected="${selectedStatus == s}">STATUS</option>
             </select>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-3">
             <label class="form-label small text-muted mb-1" for="animalId">Animal</label>
             <select id="animalId" name="animalId" class="form-select">
                 <option value="">All animals</option>
@@ -32,6 +32,23 @@
                         th:value="${a.id}"
                         th:text="${a.name}"
                         th:selected="${selectedAnimalId != null and selectedAnimalId == a.id}">Animal</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label small text-muted mb-1" for="sort">Sort by</label>
+            <select id="sort" name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="createdAt,desc" th:selected="${selectedSort == 'createdAt,desc'}">Newest first</option>
+                <option value="createdAt,asc"  th:selected="${selectedSort == 'createdAt,asc'}">Oldest first</option>
+                <option value="updatedAt,desc" th:selected="${selectedSort == 'updatedAt,desc'}">Recently updated</option>
+                <option value="status,asc"     th:selected="${selectedSort == 'status,asc'}">Status</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label class="form-label small text-muted mb-1" for="size">Per page</label>
+            <select id="size" name="size" class="form-select" onchange="this.form.submit()">
+                <option th:each="n : ${ {5, 10, 20, 50} }"
+                        th:value="${n}" th:text="${n}"
+                        th:selected="${n == selectedSize}"></option>
             </select>
         </div>
         <div class="col-md-2 d-flex align-items-end gap-2">
@@ -105,6 +122,7 @@
                 </tr>
             </tbody>
         </table>
+        <div th:replace="~{fragments/pagination :: pager(${requestsPage}, ${pageBaseUrl}, ${pageQuery}, 'page', '')}"></div>
     </div>
 
 </section>

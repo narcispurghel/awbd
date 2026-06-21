@@ -12,8 +12,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AdoptionServiceClient {
 
   private static final ParameterizedTypeReference<
-    List<BackendDtos.AdoptionDtos.AdoptionRequestView>
-  > REQUEST_LIST = new ParameterizedTypeReference<>() {};
+    BackendDtos.PageResponse<BackendDtos.AdoptionDtos.AdoptionRequestView>
+  > REQUEST_PAGE = new ParameterizedTypeReference<>() {};
 
   private final BackendHttpClient http;
 
@@ -30,17 +30,37 @@ public class AdoptionServiceClient {
   }
 
   public List<BackendDtos.AdoptionDtos.AdoptionRequestView> mine() {
-    return http.get("/api/v1/adoptions", REQUEST_LIST);
+    return minePage(0, 1000, "createdAt,desc").content();
+  }
+
+  public BackendDtos.PageResponse<BackendDtos.AdoptionDtos.AdoptionRequestView> minePage(
+    int page,
+    int size,
+    @Nullable String sort
+  ) {
+    return requestPage(null, null, page, size, sort);
   }
 
   public List<BackendDtos.AdoptionDtos.AdoptionRequestView> list(
     BackendDtos.AdoptionDtos.@Nullable AdoptionRequestStatus status,
     @Nullable UUID animalId
   ) {
+    return requestPage(status, animalId, 0, 1000, "createdAt,desc").content();
+  }
+
+  public BackendDtos.PageResponse<BackendDtos.AdoptionDtos.AdoptionRequestView> requestPage(
+    BackendDtos.AdoptionDtos.@Nullable AdoptionRequestStatus status,
+    @Nullable UUID animalId,
+    int page,
+    int size,
+    @Nullable String sort
+  ) {
     UriComponentsBuilder b = UriComponentsBuilder.fromPath("/api/v1/adoptions");
     if (status != null) b.queryParam("status", status.name());
     if (animalId != null) b.queryParam("animalId", animalId.toString());
-    return http.get(b.build().toUriString(), REQUEST_LIST);
+    b.queryParam("page", page).queryParam("size", size);
+    if (sort != null && !sort.isBlank()) b.queryParam("sort", sort);
+    return http.get(b.build().toUriString(), REQUEST_PAGE);
   }
 
   public void cancel(UUID id) {

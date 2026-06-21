@@ -12,9 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class AnimalServiceClient {
 
   private static final ParameterizedTypeReference<
-    List<BackendDtos.AnimalDtos.AnimalSummary>
-  > ANIMAL_LIST = new ParameterizedTypeReference<>() {};
-  private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.SpeciesView>
   > SPECIES_LIST = new ParameterizedTypeReference<>() {};
   private static final ParameterizedTypeReference<
@@ -24,11 +21,14 @@ public class AnimalServiceClient {
     List<BackendDtos.AnimalDtos.BreedView>
   > BREED_LIST = new ParameterizedTypeReference<>() {};
   private static final ParameterizedTypeReference<
-    List<BackendDtos.AnimalDtos.MedicalRecordView>
-  > MEDICAL_RECORD_LIST = new ParameterizedTypeReference<>() {};
-  private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.AnimalPhotoView>
   > PHOTO_LIST = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
+    BackendDtos.PageResponse<BackendDtos.AnimalDtos.AnimalSummary>
+  > ANIMAL_PAGE = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
+    BackendDtos.PageResponse<BackendDtos.AnimalDtos.MedicalRecordView>
+  > MEDICAL_PAGE = new ParameterizedTypeReference<>() {};
 
   private final BackendHttpClient http;
 
@@ -41,11 +41,24 @@ public class AnimalServiceClient {
     @Nullable UUID speciesId,
     @Nullable UUID shelterId
   ) {
+    return page(status, speciesId, shelterId, 0, 1000, "name,asc").content();
+  }
+
+  public BackendDtos.PageResponse<BackendDtos.AnimalDtos.AnimalSummary> page(
+    BackendDtos.AnimalDtos.@Nullable AnimalStatus status,
+    @Nullable UUID speciesId,
+    @Nullable UUID shelterId,
+    int page,
+    int size,
+    @Nullable String sort
+  ) {
     UriComponentsBuilder b = UriComponentsBuilder.fromPath("/api/v1/animals");
     if (status != null) b.queryParam("status", status.name());
     if (speciesId != null) b.queryParam("speciesId", speciesId.toString());
     if (shelterId != null) b.queryParam("shelterId", shelterId.toString());
-    return http.get(b.build().toUriString(), ANIMAL_LIST);
+    b.queryParam("page", page).queryParam("size", size);
+    if (sort != null && !sort.isBlank()) b.queryParam("sort", sort);
+    return http.get(b.build().toUriString(), ANIMAL_PAGE);
   }
 
   public BackendDtos.AnimalDtos.AnimalView get(UUID id) {
@@ -68,7 +81,19 @@ public class AnimalServiceClient {
   }
 
   public List<BackendDtos.AnimalDtos.MedicalRecordView> medicalRecords(UUID animalId) {
-    return http.get("/api/v1/animals/" + animalId + "/medical-records", MEDICAL_RECORD_LIST);
+    return medicalRecordsPage(animalId, 0, 1000).content();
+  }
+
+  public BackendDtos.PageResponse<BackendDtos.AnimalDtos.MedicalRecordView> medicalRecordsPage(
+    UUID animalId,
+    int page,
+    int size
+  ) {
+    UriComponentsBuilder b = UriComponentsBuilder.fromPath(
+      "/api/v1/animals/" + animalId + "/medical-records"
+    );
+    b.queryParam("page", page).queryParam("size", size);
+    return http.get(b.build().toUriString(), MEDICAL_PAGE);
   }
 
   public BackendDtos.AnimalDtos.MedicalRecordView addMedicalRecord(

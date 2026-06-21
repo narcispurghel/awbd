@@ -95,8 +95,8 @@ class AnimalControllerIntegrationTest {
     mockMvc
       .perform(get("/api/v1/animals").headers(userHeaders()))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].id").value(animalId))
-      .andExpect(jsonPath("$[0].status").value("AVAILABLE"));
+      .andExpect(jsonPath("$.content[0].id").value(animalId))
+      .andExpect(jsonPath("$.content[0].status").value("AVAILABLE"));
 
     mockMvc
       .perform(get("/api/v1/animals/{id}", animalId).headers(userHeaders()))
@@ -128,7 +128,7 @@ class AnimalControllerIntegrationTest {
     mockMvc
       .perform(get("/api/v1/animals/{id}/medical-records", animalId).headers(userHeaders()))
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].title").value("Initial exam"));
+      .andExpect(jsonPath("$.content[0].title").value("Initial exam"));
   }
 
   @Test

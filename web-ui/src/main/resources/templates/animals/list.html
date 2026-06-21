@@ -26,7 +26,7 @@
                         th:selected="${sp.id == selectedSpeciesId}"></option>
             </select>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label class="form-label" for="shelterId">Shelter</label>
             <select id="shelterId" name="shelterId" class="form-select">
                 <option value="">All</option>
@@ -34,6 +34,24 @@
                         th:value="${sh.id}"
                         th:text="|${sh.name} (${sh.city})|"
                         th:selected="${sh.id == selectedShelterId}"></option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label class="form-label" for="sort">Sort by</label>
+            <select id="sort" name="sort" class="form-select" onchange="this.form.submit()">
+                <option value="name,asc"        th:selected="${selectedSort == 'name,asc'}">Name (A–Z)</option>
+                <option value="name,desc"       th:selected="${selectedSort == 'name,desc'}">Name (Z–A)</option>
+                <option value="intakeDate,desc" th:selected="${selectedSort == 'intakeDate,desc'}">Newest intake</option>
+                <option value="intakeDate,asc"  th:selected="${selectedSort == 'intakeDate,asc'}">Oldest intake</option>
+                <option value="status,asc"      th:selected="${selectedSort == 'status,asc'}">Status</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label class="form-label" for="size">Per page</label>
+            <select id="size" name="size" class="form-select" onchange="this.form.submit()">
+                <option th:each="n : ${ {5, 10, 20, 50} }"
+                        th:value="${n}" th:text="${n}"
+                        th:selected="${n == selectedSize}"></option>
             </select>
         </div>
         <div class="col-md-2 d-flex gap-2">
@@ -46,7 +64,8 @@
         No animals match the current filters.
     </div>
 
-    <div th:unless="${#lists.isEmpty(animals)}" class="table-responsive">
+    <div th:unless="${#lists.isEmpty(animals)}">
+        <div class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
@@ -80,6 +99,8 @@
                 </tr>
             </tbody>
         </table>
+        </div>
+        <div th:replace="~{fragments/pagination :: pager(${animalsPage}, ${pageBaseUrl}, ${pageQuery}, 'page', '')}"></div>
     </div>
 </section>
 </th:block>

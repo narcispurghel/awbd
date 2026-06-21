@@ -6,8 +6,10 @@ import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface AnimalJpaRepository extends JpaRepository<Animal, UUID> {
+public interface AnimalJpaRepository
+  extends JpaRepository<Animal, UUID>, JpaSpecificationExecutor<Animal> {
   List<Animal> findAllByOrderByNameAsc();
   List<Animal> findByStatusOrderByNameAsc(AnimalStatus status);
   List<Animal> findBySpeciesIdOrderByNameAsc(UUID speciesId);

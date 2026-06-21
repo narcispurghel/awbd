@@ -12,6 +12,8 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
@@ -37,20 +39,17 @@ public class AdoptionRequestService {
   }
 
   @Transactional(readOnly = true)
-  public List<AdoptionDtos.AdoptionRequestView> list(
+  public Page<AdoptionDtos.AdoptionRequestView> list(
     Authentication authentication,
     @Nullable UUID animalId,
-    @Nullable AdoptionRequestStatus status
+    @Nullable AdoptionRequestStatus status,
+    Pageable pageable
   ) {
     Specification<AdoptionRequest> specification = byOptionalFilters(animalId, status);
     if (!isAdmin(authentication)) {
       specification = specification.and(adopterIdEquals(currentUserId(authentication)));
     }
-    return adoptionRequestRepository
-      .findAll(specification)
-      .stream()
-      .map(this::toView)
-      .toList();
+    return adoptionRequestRepository.findAll(specification, pageable).map(this::toView);
   }
 
   @Transactional(readOnly = true)

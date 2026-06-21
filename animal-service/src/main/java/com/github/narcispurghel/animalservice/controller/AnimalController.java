@@ -4,9 +4,12 @@ import com.github.narcispurghel.animalservice.dto.AnimalDtos;
 import com.github.narcispurghel.animalservice.entity.AnimalStatus;
 import com.github.narcispurghel.animalservice.service.AnimalCatalogService;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,12 +34,13 @@ public class AnimalController {
   }
 
   @GetMapping
-  public List<AnimalDtos.AnimalSummary> list(
+  public Page<AnimalDtos.AnimalSummary> list(
     @RequestParam(required = false) @Nullable AnimalStatus status,
     @RequestParam(required = false) @Nullable UUID speciesId,
-    @RequestParam(required = false) @Nullable UUID shelterId
+    @RequestParam(required = false) @Nullable UUID shelterId,
+    @PageableDefault(size = 10, sort = "name") Pageable pageable
   ) {
-    return animalCatalogService.animals(status, speciesId, shelterId);
+    return animalCatalogService.animals(status, speciesId, shelterId, pageable);
   }
 
   @GetMapping("/{id}")
@@ -67,8 +71,12 @@ public class AnimalController {
   }
 
   @GetMapping("/{id}/medical-records")
-  public List<AnimalDtos.MedicalRecordView> medicalRecords(@PathVariable UUID id) {
-    return animalCatalogService.medicalRecords(id);
+  public Page<AnimalDtos.MedicalRecordView> medicalRecords(
+    @PathVariable UUID id,
+    @PageableDefault(size = 5, sort = "examinationDate", direction = Sort.Direction.DESC)
+      Pageable pageable
+  ) {
+    return animalCatalogService.medicalRecords(id, pageable);
   }
 
   @PostMapping("/{id}/medical-records")

@@ -64,6 +64,18 @@ public final class BackendDtos {
     @Nullable List<FieldError> fieldErrors
   ) {}
 
+  /** Mirrors the Spring Data {@code Page} JSON envelope (extra fields are ignored). */
+  public record PageResponse<T>(
+    List<T> content,
+    int number,
+    int size,
+    long totalElements,
+    int totalPages,
+    boolean first,
+    boolean last,
+    int numberOfElements
+  ) {}
+
   /** Records mirroring animal-service's {@code AnimalDtos}. */
   public static final class AnimalDtos {
 

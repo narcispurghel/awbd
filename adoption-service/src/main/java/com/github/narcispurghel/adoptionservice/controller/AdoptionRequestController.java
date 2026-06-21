@@ -4,9 +4,12 @@ import com.github.narcispurghel.adoptionservice.dto.AdoptionDtos;
 import com.github.narcispurghel.adoptionservice.entity.AdoptionRequestStatus;
 import com.github.narcispurghel.adoptionservice.service.AdoptionRequestService;
 import jakarta.validation.Valid;
-import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -32,12 +35,13 @@ public class AdoptionRequestController {
   }
 
   @GetMapping
-  public List<AdoptionDtos.AdoptionRequestView> list(
+  public Page<AdoptionDtos.AdoptionRequestView> list(
     Authentication authentication,
     @RequestParam(required = false) @Nullable UUID animalId,
-    @RequestParam(required = false) @Nullable AdoptionRequestStatus status
+    @RequestParam(required = false) @Nullable AdoptionRequestStatus status,
+    @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
   ) {
-    return adoptionRequestService.list(authentication, animalId, status);
+    return adoptionRequestService.list(authentication, animalId, status, pageable);
   }
 
   @GetMapping("/{id}")

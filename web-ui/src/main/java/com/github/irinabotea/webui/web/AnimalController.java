@@ -2,6 +2,7 @@ package com.github.irinabotea.webui.web;
 
 import com.github.irinabotea.webui.client.AdoptionServiceClient;
 import com.github.irinabotea.webui.client.AnimalServiceClient;
+import com.github.irinabotea.webui.client.BackendDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos.AnimalStatus;
@@ -36,27 +37,64 @@ public class AnimalController {
     @RequestParam(name = "status", required = false) @Nullable String statusRaw,
     @RequestParam(name = "speciesId", required = false) @Nullable String speciesIdRaw,
     @RequestParam(name = "shelterId", required = false) @Nullable String shelterIdRaw,
+    @RequestParam(name = "page", defaultValue = "0") int page,
+    @RequestParam(name = "size", defaultValue = "10") int size,
+    @RequestParam(name = "sort", defaultValue = "name,asc") String sort,
     Model model
   ) {
     AnimalStatus status = parseEnum(statusRaw, AnimalStatus.class);
     UUID speciesId = parseUuid(speciesIdRaw);
     UUID shelterId = parseUuid(shelterIdRaw);
 
-    model.addAttribute("animals", animals.list(status, speciesId, shelterId));
+    BackendDtos.PageResponse<AnimalDtos.AnimalSummary> animalsPage =
+      animals.page(status, speciesId, shelterId, page, size, sort);
+
+    model.addAttribute("animalsPage", animalsPage);
+    model.addAttribute("animals", animalsPage.content());
     model.addAttribute("species", animals.species());
     model.addAttribute("shelters", animals.shelters());
     model.addAttribute("statuses", AnimalDtos.AnimalStatus.values());
     model.addAttribute("selectedStatus", status);
     model.addAttribute("selectedSpeciesId", speciesId);
     model.addAttribute("selectedShelterId", shelterId);
+    model.addAttribute("selectedSize", size);
+    model.addAttribute("selectedSort", sort);
+    model.addAttribute("pageBaseUrl", "/animals");
+    model.addAttribute("pageQuery", animalsQuery(status, speciesId, shelterId, size, sort));
     return "animals/list";
   }
 
+  private static String animalsQuery(
+    AnimalDtos.@Nullable AnimalStatus status,
+    @Nullable UUID speciesId,
+    @Nullable UUID shelterId,
+    int size,
+    String sort
+  ) {
+    StringBuilder q = new StringBuilder();
+    if (status != null) q.append("status=").append(status.name()).append('&');
+    if (speciesId != null) q.append("speciesId=").append(speciesId).append('&');
+    if (shelterId != null) q.append("shelterId=").append(shelterId).append('&');
+    q.append("size=").append(size).append("&sort=").append(sort);
+    return q.toString();
+  }
+
   @GetMapping("/{id}")
-  public String view(@PathVariable UUID id, Model model, @Nullable Authentication auth) {
+  public String view(
+    @PathVariable UUID id,
+    @RequestParam(name = "mrPage", defaultValue = "0") int mrPage,
+    @RequestParam(name = "mrSize", defaultValue = "5") int mrSize,
+    Model model,
+    @Nullable Authentication auth
+  ) {
     AnimalDtos.AnimalView animal = animals.get(id);
     model.addAttribute("animal", animal);
-    model.addAttribute("medicalRecords", animals.medicalRecords(id));
+    BackendDtos.PageResponse<AnimalDtos.MedicalRecordView> medicalPage =
+      animals.medicalRecordsPage(id, mrPage, mrSize);
+    model.addAttribute("medicalRecordsPage", medicalPage);
+    model.addAttribute("medicalRecords", medicalPage.content());
+    model.addAttribute("mrPageBaseUrl", "/animals/" + id);
+    model.addAttribute("mrPageQuery", "mrSize=" + mrSize);
     model.addAttribute("photos", animals.photos(id));
     if (!model.containsAttribute("medicalRecordForm")) {
       model.addAttribute(

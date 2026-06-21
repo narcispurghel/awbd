@@ -15,6 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -176,12 +179,15 @@ class AdoptionRequestServiceTest {
 
   @Test
   void list_asAdmin_returnsMappedViews() {
-    when(repository.findAll(any(Specification.class)))
-      .thenReturn(List.of(request(UUID.randomUUID(), adopterId, AdoptionRequestStatus.PENDING)));
+    when(repository.findAll(any(Specification.class), any(Pageable.class)))
+      .thenReturn(
+        new PageImpl<>(List.of(request(UUID.randomUUID(), adopterId, AdoptionRequestStatus.PENDING)))
+      );
 
-    List<AdoptionDtos.AdoptionRequestView> views = service.list(adminAuth(), null, null);
+    Page<AdoptionDtos.AdoptionRequestView> views =
+      service.list(adminAuth(), null, null, Pageable.unpaged());
 
-    assertThat(views).hasSize(1);
+    assertThat(views.getContent()).hasSize(1);
   }
 
   // ----- helpers -----

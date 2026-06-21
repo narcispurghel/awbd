@@ -16,6 +16,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -143,6 +146,36 @@ public class AnimalCatalogService {
   }
 
   @Transactional(readOnly = true)
+  public Page<AnimalDtos.AnimalSummary> animals(
+    @Nullable AnimalStatus status,
+    @Nullable UUID speciesId,
+    @Nullable UUID shelterId,
+    Pageable pageable
+  ) {
+    return animalRepository
+      .findAll(animalFilter(status, speciesId, shelterId), pageable)
+      .map(this::toAnimalSummary);
+  }
+
+  private static Specification<Animal> animalFilter(
+    @Nullable AnimalStatus status,
+    @Nullable UUID speciesId,
+    @Nullable UUID shelterId
+  ) {
+    Specification<Animal> spec = (root, query, cb) -> cb.conjunction();
+    if (status != null) {
+      spec = spec.and((root, query, cb) -> cb.equal(root.get("status"), status));
+    }
+    if (speciesId != null) {
+      spec = spec.and((root, query, cb) -> cb.equal(root.get("species").get("id"), speciesId));
+    }
+    if (shelterId != null) {
+      spec = spec.and((root, query, cb) -> cb.equal(root.get("shelter").get("id"), shelterId));
+    }
+    return spec;
+  }
+
+  @Transactional(readOnly = true)
   public AnimalDtos.AnimalView animal(UUID id) {
     return toAnimalView(requireAnimal(id));
   }
@@ -176,6 +209,14 @@ public class AnimalCatalogService {
       .stream()
       .map(this::toMedicalRecordView)
       .toList();
+  }
+
+  @Transactional(readOnly = true)
+  public Page<AnimalDtos.MedicalRecordView> medicalRecords(UUID animalId, Pageable pageable) {
+    requireAnimal(animalId);
+    return medicalRecordRepository
+      .findByAnimalId(animalId, pageable)
+      .map(this::toMedicalRecordView);
   }
 
   public AnimalDtos.MedicalRecordView addMedicalRecord(

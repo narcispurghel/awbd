@@ -54,12 +54,17 @@ public class AdminAdoptionController {
   public String list(
     @RequestParam(name = "status", required = false) @Nullable String statusRaw,
     @RequestParam(name = "animalId", required = false) @Nullable String animalIdRaw,
+    @RequestParam(name = "page", defaultValue = "0") int page,
+    @RequestParam(name = "size", defaultValue = "10") int size,
+    @RequestParam(name = "sort", defaultValue = "createdAt,desc") String sort,
     Model model
   ) {
     AdoptionRequestStatus status = parseEnum(statusRaw, AdoptionRequestStatus.class);
     UUID animalId = parseUuid(animalIdRaw);
 
-    List<AdoptionDtos.AdoptionRequestView> requests = adoptions.list(status, animalId);
+    BackendDtos.PageResponse<AdoptionDtos.AdoptionRequestView> requestsPage =
+      adoptions.requestPage(status, animalId, page, size, sort);
+    List<AdoptionDtos.AdoptionRequestView> requests = requestsPage.content();
     List<AnimalDtos.AnimalSummary> allAnimals = animals.list(null, null, null);
     Map<UUID, AnimalDtos.AnimalSummary> animalIndex = new HashMap<>(allAnimals.size());
     for (AnimalDtos.AnimalSummary a : allAnimals) {
@@ -80,13 +85,31 @@ public class AdminAdoptionController {
     }
 
     model.addAttribute("requests", requests);
+    model.addAttribute("requestsPage", requestsPage);
     model.addAttribute("animalIndex", animalIndex);
     model.addAttribute("adopterIndex", adopterIndex);
     model.addAttribute("animalOptions", allAnimals);
     model.addAttribute("statuses", AdoptionRequestStatus.values());
     model.addAttribute("selectedStatus", status);
     model.addAttribute("selectedAnimalId", animalId);
+    model.addAttribute("selectedSize", size);
+    model.addAttribute("selectedSort", sort);
+    model.addAttribute("pageBaseUrl", "/admin/adoptions");
+    model.addAttribute("pageQuery", adminAdoptionsQuery(status, animalId, size, sort));
     return "admin/adoptions/list";
+  }
+
+  private static String adminAdoptionsQuery(
+    AdoptionDtos.@Nullable AdoptionRequestStatus status,
+    @Nullable UUID animalId,
+    int size,
+    String sort
+  ) {
+    StringBuilder q = new StringBuilder();
+    if (status != null) q.append("status=").append(status.name()).append('&');
+    if (animalId != null) q.append("animalId=").append(animalId).append('&');
+    q.append("size=").append(size).append("&sort=").append(sort);
+    return q.toString();
   }
 
   @GetMapping("/{id}")

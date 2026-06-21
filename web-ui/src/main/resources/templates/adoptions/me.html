@@ -19,6 +19,24 @@
         </a>
     </div>
 
+    <form th:unless="${#lists.isEmpty(rows)}" th:action="@{/adoptions/me}" method="get"
+          class="row g-2 justify-content-end mb-2">
+        <div class="col-auto">
+            <select name="sort" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Sort by">
+                <option value="createdAt,desc" th:selected="${selectedSort == 'createdAt,desc'}">Newest first</option>
+                <option value="createdAt,asc"  th:selected="${selectedSort == 'createdAt,asc'}">Oldest first</option>
+                <option value="updatedAt,desc" th:selected="${selectedSort == 'updatedAt,desc'}">Recently updated</option>
+                <option value="status,asc"     th:selected="${selectedSort == 'status,asc'}">Status</option>
+            </select>
+        </div>
+        <div class="col-auto">
+            <select name="size" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Per page">
+                <option th:each="n : ${ {5, 10, 20, 50} }" th:value="${n}" th:text="|${n} / page|"
+                        th:selected="${n == selectedSize}"></option>
+            </select>
+        </div>
+    </form>
+
     <div th:unless="${#lists.isEmpty(rows)}" class="table-responsive">
         <table class="table table-hover align-middle">
             <thead>
@@ -69,6 +87,7 @@
             </tbody>
         </table>
     </div>
+    <div th:replace="~{fragments/pagination :: pager(${adoptionsPage}, ${pageBaseUrl}, ${pageQuery}, 'page', '')}"></div>
 
     <div class="modal fade" id="cancelRequestModal" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">

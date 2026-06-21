@@ -54,8 +54,8 @@ class AdoptionRequestControllerIntegrationTest {
           .param("status", AdoptionRequestStatus.PENDING.name())
       )
       .andExpect(status().isOk())
-      .andExpect(jsonPath("$[0].id").value(adoptionId))
-      .andExpect(jsonPath("$[0].status").value("PENDING"));
+      .andExpect(jsonPath("$.content[0].id").value(adoptionId))
+      .andExpect(jsonPath("$.content[0].status").value("PENDING"));
 
     mockMvc
       .perform(

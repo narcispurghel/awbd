@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<!--
+  Reusable pagination control.
+  Usage:
+    <div th:replace="~{fragments/pagination :: pager(${animalsPage}, ${pageBaseUrl}, ${pageQuery}, 'page', '')}"></div>
+  Params:
+    page      - a PageResponse (content, number, size, totalElements, totalPages, first, last)
+    baseUrl   - target path, e.g. '/animals'
+    query     - query string with all params except the page index (e.g. 'size=10&sort=name,asc')
+    pageParam - name of the page-index request param (e.g. 'page' or 'mrPage')
+    anchor    - optional fragment to append (e.g. '#medical') or ''
+-->
+<nav th:fragment="pager(page, baseUrl, query, pageParam, anchor)"
+     th:if="${page != null and page.totalPages() > 1}"
+     class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3"
+     aria-label="Pagination">
+    <small class="text-body-secondary">
+        Page <span th:text="${page.number() + 1}">1</span>
+        of <span th:text="${page.totalPages()}">1</span>
+        <span class="d-none d-sm-inline">· <span th:text="${page.totalElements()}">0</span> total</span>
+    </small>
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item" th:classappend="${page.first()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{|${baseUrl}?${query}&${pageParam}=${page.number() - 1}${anchor}|}"
+               aria-label="Previous">&laquo;</a>
+        </li>
+        <li class="page-item"
+            th:each="i : ${#numbers.sequence(0, page.totalPages() - 1)}"
+            th:classappend="${i == page.number()} ? 'active'">
+            <a class="page-link"
+               th:href="@{|${baseUrl}?${query}&${pageParam}=${i}${anchor}|}"
+               th:text="${i + 1}">1</a>
+        </li>
+        <li class="page-item" th:classappend="${page.last()} ? 'disabled'">
+            <a class="page-link"
+               th:href="@{|${baseUrl}?${query}&${pageParam}=${page.number() + 1}${anchor}|}"
+               aria-label="Next">&raquo;</a>
+        </li>
+    </ul>
+</nav>
+</body>
+</html>

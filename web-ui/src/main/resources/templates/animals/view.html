@@ -170,6 +170,8 @@
             </div>
         </div>
 
+        <div th:replace="~{fragments/pagination :: pager(${medicalRecordsPage}, ${mrPageBaseUrl}, ${mrPageQuery}, 'mrPage', '#medical')}"></div>
+
         <div sec:authorize="hasRole('ADMIN')" class="card shadow-sm">
             <div class="card-body">
                 <h3 class="h6 mb-3"><i class="bi bi-plus-circle me-1"></i>Add medical record</h3>

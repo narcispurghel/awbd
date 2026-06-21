@@ -2,6 +2,7 @@ package com.github.irinabotea.webui.web;
 
 import com.github.irinabotea.webui.client.AdoptionServiceClient;
 import com.github.irinabotea.webui.client.AnimalServiceClient;
+import com.github.irinabotea.webui.client.BackendDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AdoptionDtos;
 import com.github.irinabotea.webui.client.BackendDtos.AnimalDtos;
 import com.github.irinabotea.webui.client.BackendException;
@@ -63,16 +64,28 @@ public class AdoptionController {
   }
 
   @GetMapping("/me")
-  public String mine(Model model, @Nullable Authentication auth) {
+  public String mine(
+    @RequestParam(name = "page", defaultValue = "0") int page,
+    @RequestParam(name = "size", defaultValue = "10") int size,
+    @RequestParam(name = "sort", defaultValue = "createdAt,desc") String sort,
+    Model model,
+    @Nullable Authentication auth
+  ) {
     if (auth != null && isAdmin(auth)) {
       return "redirect:/admin/adoptions";
     }
-    List<AdoptionDtos.AdoptionRequestView> requests = adoptions.mine();
-    List<MyAdoptionRow> rows = new ArrayList<>(requests.size());
-    for (AdoptionDtos.AdoptionRequestView r : requests) {
+    BackendDtos.PageResponse<AdoptionDtos.AdoptionRequestView> requests =
+      adoptions.minePage(page, size, sort);
+    List<MyAdoptionRow> rows = new ArrayList<>(requests.content().size());
+    for (AdoptionDtos.AdoptionRequestView r : requests.content()) {
       rows.add(new MyAdoptionRow(r, fetchAnimal(r.animalId())));
     }
     model.addAttribute("rows", rows);
+    model.addAttribute("adoptionsPage", requests);
+    model.addAttribute("selectedSize", size);
+    model.addAttribute("selectedSort", sort);
+    model.addAttribute("pageBaseUrl", "/adoptions/me");
+    model.addAttribute("pageQuery", "size=" + size + "&sort=" + sort);
     return "adoptions/me";
   }
 
