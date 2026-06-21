@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -32,5 +33,16 @@ public class AdminUserController {
     }
     model.addAttribute("user", user);
     return "admin/users/view";
+  }
+
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      users.deleteUser(id);
+      flash.addFlashAttribute("success", "User deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/adoptions";
   }
 }

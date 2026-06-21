@@ -115,6 +115,21 @@ public class AnimalPhotoService {
     photoRepository.delete(photo);
   }
 
+  /** Deletes every photo (storage object + row) attached to an animal. Used when an animal is removed. */
+  public void deleteAllForAnimal(UUID animalId) {
+    List<AnimalPhoto> all = photoRepository.findByAnimalIdOrderBySortOrderAscCreatedAtAsc(animalId);
+    for (AnimalPhoto photo : all) {
+      try {
+        s3.deleteObject(
+          DeleteObjectRequest.builder().bucket(storage.bucket()).key(photo.getObjectKey()).build()
+        );
+      } catch (S3Exception ignored) {
+        // proceed with row deletion even if S3 delete fails; orphaned object can be cleaned later
+      }
+    }
+    photoRepository.deleteAll(all);
+  }
+
   @Transactional(readOnly = true)
   public PhotoBytes download(UUID animalId, UUID photoId) {
     AnimalPhoto photo = requirePhoto(animalId, photoId);

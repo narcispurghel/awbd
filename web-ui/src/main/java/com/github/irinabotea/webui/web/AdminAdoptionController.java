@@ -104,6 +104,17 @@ public class AdminAdoptionController {
     return "admin/adoptions/view";
   }
 
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      adoptions.delete(id);
+      flash.addFlashAttribute("success", "Adoption request deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/adoptions";
+  }
+
   @PostMapping("/{id}/review")
   public String review(
     @PathVariable UUID id,

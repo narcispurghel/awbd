@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface BreedJpaRepository extends JpaRepository<Breed, UUID> {
   List<Breed> findBySpeciesIdOrderByNameAsc(UUID speciesId);
+
+  boolean existsBySpeciesId(UUID speciesId);
 }

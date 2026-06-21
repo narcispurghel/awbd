@@ -33,6 +33,17 @@ public class AdminShelterController {
     return "admin/shelters/list";
   }
 
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      animals.deleteShelter(id);
+      flash.addFlashAttribute("success", "Shelter deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/shelters";
+  }
+
   @GetMapping("/new")
   public String createPage(Model model) {
     if (!model.containsAttribute("shelterForm")) {

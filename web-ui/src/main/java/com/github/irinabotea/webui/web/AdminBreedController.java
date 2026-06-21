@@ -33,6 +33,17 @@ public class AdminBreedController {
     return "admin/breeds/list";
   }
 
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      animals.deleteBreed(id);
+      flash.addFlashAttribute("success", "Breed deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/breeds";
+  }
+
   @GetMapping("/new")
   public String createPage(Model model) {
     if (!model.containsAttribute("breedForm")) {

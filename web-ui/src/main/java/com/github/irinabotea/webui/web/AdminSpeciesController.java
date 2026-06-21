@@ -33,6 +33,17 @@ public class AdminSpeciesController {
     return "admin/species/list";
   }
 
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      animals.deleteSpecies(id);
+      flash.addFlashAttribute("success", "Species deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/admin/species";
+  }
+
   @GetMapping("/new")
   public String createPage(Model model) {
     if (!model.containsAttribute("speciesForm")) {

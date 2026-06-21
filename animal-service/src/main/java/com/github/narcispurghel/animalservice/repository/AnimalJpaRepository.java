@@ -21,6 +21,10 @@ public interface AnimalJpaRepository extends JpaRepository<Animal, UUID> {
     UUID shelterId
   );
 
+  boolean existsByShelterId(UUID shelterId);
+  boolean existsBySpeciesId(UUID speciesId);
+  boolean existsByBreedId(UUID breedId);
+
   default List<Animal> filter(
     @Nullable AnimalStatus status,
     @Nullable UUID speciesId,

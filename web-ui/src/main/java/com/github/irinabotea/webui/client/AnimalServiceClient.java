@@ -63,6 +63,10 @@ public class AnimalServiceClient {
     return http.put("/api/v1/animals/" + id, body, BackendDtos.AnimalDtos.AnimalView.class);
   }
 
+  public void deleteAnimal(UUID id) {
+    http.delete("/api/v1/animals/" + id);
+  }
+
   public List<BackendDtos.AnimalDtos.MedicalRecordView> medicalRecords(UUID animalId) {
     return http.get("/api/v1/animals/" + animalId + "/medical-records", MEDICAL_RECORD_LIST);
   }
@@ -76,6 +80,10 @@ public class AnimalServiceClient {
       body,
       BackendDtos.AnimalDtos.MedicalRecordView.class
     );
+  }
+
+  public void deleteMedicalRecord(UUID animalId, UUID recordId) {
+    http.delete("/api/v1/animals/" + animalId + "/medical-records/" + recordId);
   }
 
   public List<BackendDtos.AnimalDtos.SpeciesView> species() {
@@ -101,6 +109,10 @@ public class AnimalServiceClient {
     return http.put("/api/v1/shelters/" + id, body, BackendDtos.AnimalDtos.ShelterView.class);
   }
 
+  public void deleteShelter(UUID id) {
+    http.delete("/api/v1/shelters/" + id);
+  }
+
   public BackendDtos.AnimalDtos.@Nullable SpeciesView findSpecies(UUID id) {
     for (BackendDtos.AnimalDtos.SpeciesView s : species()) {
       if (id.equals(s.id())) return s;
@@ -114,6 +126,10 @@ public class AnimalServiceClient {
 
   public BackendDtos.AnimalDtos.SpeciesView updateSpecies(UUID id, BackendDtos.AnimalDtos.UpsertSpeciesRequest body) {
     return http.put("/api/v1/species/" + id, body, BackendDtos.AnimalDtos.SpeciesView.class);
+  }
+
+  public void deleteSpecies(UUID id) {
+    http.delete("/api/v1/species/" + id);
   }
 
   public List<BackendDtos.AnimalDtos.BreedView> breeds(@Nullable UUID speciesId) {
@@ -135,6 +151,10 @@ public class AnimalServiceClient {
 
   public BackendDtos.AnimalDtos.BreedView updateBreed(UUID id, BackendDtos.AnimalDtos.UpsertBreedRequest body) {
     return http.put("/api/v1/breeds/" + id, body, BackendDtos.AnimalDtos.BreedView.class);
+  }
+
+  public void deleteBreed(UUID id) {
+    http.delete("/api/v1/breeds/" + id);
   }
 
   public List<BackendDtos.AnimalDtos.AnimalPhotoView> photos(UUID animalId) {

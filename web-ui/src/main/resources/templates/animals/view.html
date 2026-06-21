@@ -43,6 +43,14 @@
                        class="btn btn-sm btn-outline-secondary">
                         <i class="bi bi-pencil me-1"></i>Edit
                     </a>
+                    <form sec:authorize="hasRole('ADMIN')"
+                          th:action="@{/admin/animals/{id}/delete(id=${animal.id})}" method="post"
+                          class="d-inline"
+                          onsubmit="return confirm('Delete this animal, including its photos and medical records? This cannot be undone.')">
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            <i class="bi bi-trash me-1"></i>Delete
+                        </button>
+                    </form>
                 </div>
             </div>
 
@@ -131,9 +139,19 @@
                         <h3 class="h6 mb-0" th:text="${r.title}">Title</h3>
                         <small class="text-muted" th:text="${r.examinationDate}">date</small>
                     </div>
-                    <span th:if="${r.followUpRequired}" class="badge text-bg-warning">
-                        <i class="bi bi-flag me-1"></i>Follow-up
-                    </span>
+                    <div class="d-flex align-items-center gap-2">
+                        <span th:if="${r.followUpRequired}" class="badge text-bg-warning">
+                            <i class="bi bi-flag me-1"></i>Follow-up
+                        </span>
+                        <form sec:authorize="hasRole('ADMIN')"
+                              th:action="@{/admin/animals/{aid}/medical-records/{rid}/delete(aid=${animal.id},rid=${r.id})}"
+                              method="post"
+                              onsubmit="return confirm('Delete this medical record?')">
+                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete record">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </div>
                 <dl class="row mb-0 small">
                     <th:block th:if="${r.weightKg != null}">

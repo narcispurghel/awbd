@@ -44,4 +44,8 @@ public class UserServiceClient {
   public void deactivate(BackendDtos.DeactivateRequest body) {
     http.postVoid("/api/v1/users/me/deactivate", body);
   }
+
+  public void deleteUser(UUID id) {
+    http.delete("/api/v1/users/" + id);
+  }
 }

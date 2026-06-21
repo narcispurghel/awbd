@@ -85,6 +85,12 @@ public class UserAccountService {
     userRepository.save(user);
   }
 
+  @Transactional
+  public void deleteUser(UUID userId) {
+    User user = requireUser(userId);
+    userRepository.delete(user);
+  }
+
   private User requireUser(UUID userId) {
     return userRepository
       .findByIdWithProfile(userId)

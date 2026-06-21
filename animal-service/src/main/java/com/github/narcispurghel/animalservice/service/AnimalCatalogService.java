@@ -30,19 +30,22 @@ public class AnimalCatalogService {
   private final BreedJpaRepository breedRepository;
   private final AnimalJpaRepository animalRepository;
   private final MedicalRecordJpaRepository medicalRecordRepository;
+  private final AnimalPhotoService animalPhotoService;
 
   public AnimalCatalogService(
     ShelterJpaRepository shelterRepository,
     SpeciesJpaRepository speciesRepository,
     BreedJpaRepository breedRepository,
     AnimalJpaRepository animalRepository,
-    MedicalRecordJpaRepository medicalRecordRepository
+    MedicalRecordJpaRepository medicalRecordRepository,
+    AnimalPhotoService animalPhotoService
   ) {
     this.shelterRepository = shelterRepository;
     this.speciesRepository = speciesRepository;
     this.breedRepository = breedRepository;
     this.animalRepository = animalRepository;
     this.medicalRecordRepository = medicalRecordRepository;
+    this.animalPhotoService = animalPhotoService;
   }
 
   @Transactional(readOnly = true)
@@ -62,6 +65,14 @@ public class AnimalCatalogService {
     return toShelterView(shelter);
   }
 
+  public void deleteShelter(UUID id) {
+    Shelter shelter = requireShelter(id);
+    if (animalRepository.existsByShelterId(id)) {
+      throw conflict("Shelter still has animals and cannot be deleted");
+    }
+    shelterRepository.delete(shelter);
+  }
+
   @Transactional(readOnly = true)
   public List<AnimalDtos.SpeciesView> species() {
     return speciesRepository.findAll().stream().map(this::toSpeciesView).toList();
@@ -77,6 +88,17 @@ public class AnimalCatalogService {
     Species species = requireSpecies(id);
     species.setName(normalizeName(body.name()));
     return toSpeciesView(species);
+  }
+
+  public void deleteSpecies(UUID id) {
+    Species species = requireSpecies(id);
+    if (breedRepository.existsBySpeciesId(id)) {
+      throw conflict("Species still has breeds and cannot be deleted");
+    }
+    if (animalRepository.existsBySpeciesId(id)) {
+      throw conflict("Species still has animals and cannot be deleted");
+    }
+    speciesRepository.delete(species);
   }
 
   @Transactional(readOnly = true)
@@ -97,6 +119,14 @@ public class AnimalCatalogService {
     Breed breed = requireBreed(id);
     applyBreed(breed, body);
     return toBreedView(breed);
+  }
+
+  public void deleteBreed(UUID id) {
+    Breed breed = requireBreed(id);
+    if (animalRepository.existsByBreedId(id)) {
+      throw conflict("Breed still has animals and cannot be deleted");
+    }
+    breedRepository.delete(breed);
   }
 
   @Transactional(readOnly = true)
@@ -127,6 +157,15 @@ public class AnimalCatalogService {
     Animal animal = requireAnimal(id);
     applyAnimal(animal, body);
     return toAnimalView(animal);
+  }
+
+  public void deleteAnimal(UUID id) {
+    Animal animal = requireAnimal(id);
+    animalPhotoService.deleteAllForAnimal(id);
+    medicalRecordRepository.deleteAll(
+      medicalRecordRepository.findByAnimalIdOrderByExaminationDateDesc(id)
+    );
+    animalRepository.delete(animal);
   }
 
   @Transactional(readOnly = true)
@@ -161,6 +200,15 @@ public class AnimalCatalogService {
     }
     applyMedicalRecord(record, body);
     return toMedicalRecordView(record);
+  }
+
+  public void deleteMedicalRecord(UUID animalId, UUID recordId) {
+    requireAnimal(animalId);
+    MedicalRecord record = requireMedicalRecord(recordId);
+    if (!record.getAnimal().getId().equals(animalId)) {
+      throw notFound("Medical record does not belong to the requested animal");
+    }
+    medicalRecordRepository.delete(record);
   }
 
   private void applyShelter(Shelter shelter, AnimalDtos.UpsertShelterRequest body) {
@@ -329,5 +377,9 @@ public class AnimalCatalogService {
 
   private ResponseStatusException notFound(String message) {
     return new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+  }
+
+  private ResponseStatusException conflict(String message) {
+    return new ResponseStatusException(HttpStatus.CONFLICT, message);
   }
 }

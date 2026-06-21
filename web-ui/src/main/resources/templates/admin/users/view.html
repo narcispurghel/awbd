@@ -37,6 +37,16 @@
                 <dt class="col-sm-3">Created</dt>
                 <dd class="col-sm-9 small text-muted" th:text="${user.createdAt()}">date</dd>
             </dl>
+
+            <div class="mt-3 pt-3 border-top text-end">
+                <form th:action="@{/admin/users/{id}/delete(id=${user.id()})}" method="post"
+                      class="d-inline"
+                      onsubmit="return confirm('Delete this user and their adopter profile? This cannot be undone.')">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        <i class="bi bi-trash me-1"></i>Delete user
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 

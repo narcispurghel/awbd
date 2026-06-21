@@ -61,4 +61,8 @@ public class AdoptionServiceClient {
       BackendDtos.AdoptionDtos.AdoptionRequestView.class
     );
   }
+
+  public void delete(UUID id) {
+    http.delete("/api/v1/adoptions/" + id);
+  }
 }

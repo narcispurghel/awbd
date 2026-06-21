@@ -174,6 +174,33 @@ public class AdminAnimalController {
     return "redirect:/admin/animals/" + id + "/edit#photos";
   }
 
+  @PostMapping("/{id}/delete")
+  public String delete(@PathVariable UUID id, RedirectAttributes flash) {
+    try {
+      animals.deleteAnimal(id);
+      flash.addFlashAttribute("success", "Animal deleted.");
+      return "redirect:/animals";
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+      return "redirect:/animals/" + id;
+    }
+  }
+
+  @PostMapping("/{animalId}/medical-records/{recordId}/delete")
+  public String deleteMedicalRecord(
+    @PathVariable UUID animalId,
+    @PathVariable UUID recordId,
+    RedirectAttributes flash
+  ) {
+    try {
+      animals.deleteMedicalRecord(animalId, recordId);
+      flash.addFlashAttribute("success", "Medical record deleted.");
+    } catch (BackendException ex) {
+      flash.addFlashAttribute("error", ex.safeMessage());
+    }
+    return "redirect:/animals/" + animalId + "#medical";
+  }
+
   @PostMapping("/{id}/medical-records")
   public String addMedicalRecord(
     @PathVariable UUID id,

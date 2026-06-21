@@ -156,6 +156,12 @@ public class AdoptionRequestService {
     return toView(saved);
   }
 
+  public void delete(Authentication authentication, UUID id) {
+    requireAdmin(authentication);
+    AdoptionRequest request = requireRequest(id);
+    adoptionRequestRepository.delete(request);
+  }
+
   private Specification<AdoptionRequest> byOptionalFilters(
     @Nullable UUID animalId,
     @Nullable AdoptionRequestStatus status
