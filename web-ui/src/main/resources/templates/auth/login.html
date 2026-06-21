@@ -7,19 +7,22 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 mb-3">Log in</h1>
-                <form th:action="@{/login}" th:object="${loginForm}" method="post" novalidate>
+                <form th:action="@{/login}" th:object="${loginForm}" method="post"
+                      class="needs-validation" novalidate>
                     <div th:replace="~{fragments/form-errors :: globals}"></div>
                     <input type="hidden" name="redirect" th:value="${redirect}"/>
                     <div class="mb-3">
                         <label class="form-label" for="email">Email</label>
-                        <input id="email" type="email" th:field="*{email}"
+                        <input id="email" type="email" th:field="*{email}" required
                                class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('email')})}"></div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="password">Password</label>
-                        <input id="password" type="password" th:field="*{password}"
+                        <input id="password" type="password" th:field="*{password}" required
                                class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter your password.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('password')})}"></div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100">Log in</button>

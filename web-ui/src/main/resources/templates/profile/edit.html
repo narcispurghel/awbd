@@ -7,36 +7,41 @@
 
     <div class="card shadow-sm">
         <div class="card-body">
-            <form th:action="@{/profile/edit}" th:object="${profileForm}" method="post" novalidate>
+            <form th:action="@{/profile/edit}" th:object="${profileForm}" method="post"
+                  class="needs-validation" novalidate>
                 <div th:replace="~{fragments/form-errors :: globals}"></div>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label" for="firstName">First name</label>
-                        <input id="firstName" type="text" th:field="*{firstName}"
+                        <input id="firstName" type="text" th:field="*{firstName}" required maxlength="100"
                                class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter your first name.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('firstName')})}"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="lastName">Last name</label>
-                        <input id="lastName" type="text" th:field="*{lastName}"
+                        <input id="lastName" type="text" th:field="*{lastName}" required maxlength="100"
                                class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter your last name.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('lastName')})}"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="phone">Phone (E.164)</label>
                         <input id="phone" type="tel" th:field="*{phone}" placeholder="+40712345678"
+                               pattern="\+[1-9][0-9]{7,14}"
                                class="form-control" th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Use international format, e.g. +40712345678.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('phone')})}"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="city">City</label>
-                        <input id="city" type="text" th:field="*{city}"
+                        <input id="city" type="text" th:field="*{city}" maxlength="100"
                                class="form-control" th:classappend="${#fields.hasErrors('city')} ? 'is-invalid'"/>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('city')})}"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="houseType">House type</label>
-                        <select id="houseType" th:field="*{houseType}"
+                        <select id="houseType" th:field="*{houseType}" required
                                 class="form-select" th:classappend="${#fields.hasErrors('houseType')} ? 'is-invalid'">
                             <option value="APARTMENT">Apartment</option>
                             <option value="HOUSE">House</option>
@@ -47,8 +52,9 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="experienceWithPets">Experience (years)</label>
-                        <input id="experienceWithPets" type="number" min="0" th:field="*{experienceWithPets}"
+                        <input id="experienceWithPets" type="number" min="0" required th:field="*{experienceWithPets}"
                                class="form-control" th:classappend="${#fields.hasErrors('experienceWithPets')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Enter 0 or a positive number of years.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('experienceWithPets')})}"></div>
                     </div>
                     <div class="col-12">

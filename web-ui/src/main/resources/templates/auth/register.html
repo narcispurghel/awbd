@@ -7,31 +7,40 @@
         <div class="card shadow-sm">
             <div class="card-body p-4">
                 <h1 class="h4 mb-3">Create your account</h1>
-                <form th:action="@{/register}" th:object="${registerForm}" method="post" novalidate>
+                <form th:action="@{/register}" th:object="${registerForm}" method="post"
+                      class="needs-validation" novalidate>
                     <div th:replace="~{fragments/form-errors :: globals}"></div>
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label" for="firstName">First name</label>
                             <input id="firstName" type="text" th:field="*{firstName}"
+                                   required maxlength="100"
                                    class="form-control" th:classappend="${#fields.hasErrors('firstName')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Please enter your first name.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('firstName')})}"></div>
                         </div>
                         <div class="col-md-6">
                             <label class="form-label" for="lastName">Last name</label>
                             <input id="lastName" type="text" th:field="*{lastName}"
+                                   required maxlength="100"
                                    class="form-control" th:classappend="${#fields.hasErrors('lastName')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Please enter your last name.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('lastName')})}"></div>
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="email">Email</label>
                             <input id="email" type="email" th:field="*{email}"
+                                   required maxlength="255"
                                    class="form-control" th:classappend="${#fields.hasErrors('email')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('email')})}"></div>
                         </div>
                         <div class="col-12">
                             <label class="form-label" for="password">Password</label>
                             <input id="password" type="password" th:field="*{password}"
+                                   required minlength="8" maxlength="100"
                                    class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Password must be between 8 and 100 characters.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('password')})}"></div>
                             <div class="form-text">At least 8 characters.</div>
                         </div>

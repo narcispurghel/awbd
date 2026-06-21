@@ -17,16 +17,17 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form th:action="${animalId} == null ? @{/admin/animals} : @{/admin/animals/{id}(id=${animalId})}"
-                  th:object="${animalForm}" method="post" novalidate
+                  th:object="${animalForm}" method="post" class="needs-validation" novalidate
                   data-animal-form>
                 <div th:replace="~{fragments/form-errors :: globals}"></div>
 
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label" for="name">Name</label>
-                        <input id="name" type="text" th:field="*{name}" maxlength="120"
+                        <input id="name" type="text" th:field="*{name}" required maxlength="120"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter the animal's name.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('name')})}"></div>
                     </div>
 
@@ -42,7 +43,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="shelterId">Shelter</label>
-                        <select id="shelterId" th:field="*{shelterId}"
+                        <select id="shelterId" th:field="*{shelterId}" required
                                 class="form-select"
                                 th:classappend="${#fields.hasErrors('shelterId')} ? 'is-invalid'">
                             <option value="">— Select shelter —</option>
@@ -50,6 +51,7 @@
                                     th:value="${s.id}"
                                     th:text="${s.name + ' (' + s.city + ')'}">Shelter</option>
                         </select>
+                        <div class="invalid-feedback">Please choose a shelter.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('shelterId')})}"></div>
                     </div>
 
@@ -65,7 +67,7 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="speciesId">Species</label>
-                        <select id="speciesId" th:field="*{speciesId}"
+                        <select id="speciesId" th:field="*{speciesId}" required
                                 class="form-select"
                                 th:classappend="${#fields.hasErrors('speciesId')} ? 'is-invalid'"
                                 data-breed-filter-source>
@@ -73,6 +75,7 @@
                             <option th:each="s : ${speciesOptions}"
                                     th:value="${s.id}" th:text="${s.name}">Species</option>
                         </select>
+                        <div class="invalid-feedback">Please choose a species.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('speciesId')})}"></div>
                     </div>
 
@@ -93,9 +96,10 @@
 
                     <div class="col-md-6">
                         <label class="form-label" for="intakeDate">Intake date</label>
-                        <input id="intakeDate" type="date" th:field="*{intakeDate}"
+                        <input id="intakeDate" type="date" th:field="*{intakeDate}" required
                                class="form-control"
                                th:classappend="${#fields.hasErrors('intakeDate')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please provide the intake date.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('intakeDate')})}"></div>
                     </div>
 

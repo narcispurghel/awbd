@@ -17,15 +17,16 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form th:action="${speciesId} == null ? @{/admin/species} : @{/admin/species/{id}(id=${speciesId})}"
-                  th:object="${speciesForm}" method="post" novalidate>
+                  th:object="${speciesForm}" method="post" class="needs-validation" novalidate>
                 <div th:replace="~{fragments/form-errors :: globals}"></div>
 
                 <div class="row g-3">
                     <div class="col-12">
                         <label class="form-label" for="name">Name</label>
-                        <input id="name" type="text" th:field="*{name}" maxlength="80"
+                        <input id="name" type="text" th:field="*{name}" required maxlength="80"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter the species name.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('name')})}"></div>
                     </div>
                 </div>

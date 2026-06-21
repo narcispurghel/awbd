@@ -17,40 +17,45 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form th:action="${shelterId} == null ? @{/admin/shelters} : @{/admin/shelters/{id}(id=${shelterId})}"
-                  th:object="${shelterForm}" method="post" novalidate>
+                  th:object="${shelterForm}" method="post" class="needs-validation" novalidate>
                 <div th:replace="~{fragments/form-errors :: globals}"></div>
 
                 <div class="row g-3">
                     <div class="col-md-8">
                         <label class="form-label" for="name">Name</label>
-                        <input id="name" type="text" th:field="*{name}" maxlength="120"
+                        <input id="name" type="text" th:field="*{name}" required maxlength="120"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter the shelter name.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('name')})}"></div>
                     </div>
 
                     <div class="col-md-4">
                         <label class="form-label" for="countryCode">Country code</label>
-                        <input id="countryCode" type="text" th:field="*{countryCode}" maxlength="2"
+                        <input id="countryCode" type="text" th:field="*{countryCode}"
+                               required minlength="2" maxlength="2" pattern="[A-Za-z]{2}"
                                placeholder="RO" style="text-transform: uppercase"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('countryCode')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Use a 2-letter country code (e.g. RO).</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('countryCode')})}"></div>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label" for="city">City</label>
-                        <input id="city" type="text" th:field="*{city}" maxlength="100"
+                        <input id="city" type="text" th:field="*{city}" required maxlength="100"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('city')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter the city.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('city')})}"></div>
                     </div>
 
                     <div class="col-md-6">
                         <label class="form-label" for="contactEmail">Contact email</label>
-                        <input id="contactEmail" type="email" th:field="*{contactEmail}" maxlength="255"
+                        <input id="contactEmail" type="email" th:field="*{contactEmail}" required maxlength="255"
                                class="form-control"
                                th:classappend="${#fields.hasErrors('contactEmail')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter a valid contact email.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('contactEmail')})}"></div>
                     </div>
 

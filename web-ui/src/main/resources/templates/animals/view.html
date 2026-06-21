@@ -174,23 +174,25 @@
             <div class="card-body">
                 <h3 class="h6 mb-3"><i class="bi bi-plus-circle me-1"></i>Add medical record</h3>
                 <form th:action="@{/admin/animals/{id}/medical-records(id=${animal.id})}"
-                      th:object="${medicalRecordForm}" method="post" novalidate>
+                      th:object="${medicalRecordForm}" method="post" class="needs-validation" novalidate>
                     <div th:replace="~{fragments/form-errors :: globals}"></div>
 
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label" for="title">Title</label>
-                            <input id="title" type="text" th:field="*{title}" maxlength="120"
+                            <input id="title" type="text" th:field="*{title}" required maxlength="120"
                                    class="form-control"
                                    th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Please enter a title for the record.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('title')})}"></div>
                         </div>
 
                         <div class="col-md-4">
                             <label class="form-label" for="examinationDate">Examination date</label>
-                            <input id="examinationDate" type="date" th:field="*{examinationDate}"
+                            <input id="examinationDate" type="date" th:field="*{examinationDate}" required
                                    class="form-control"
                                    th:classappend="${#fields.hasErrors('examinationDate')} ? 'is-invalid'"/>
+                            <div class="invalid-feedback">Please provide the examination date.</div>
                             <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('examinationDate')})}"></div>
                         </div>
 

@@ -8,25 +8,30 @@
     <div class="card shadow-sm mb-4">
         <div class="card-header">Change password</div>
         <div class="card-body">
-            <form th:action="@{/account/password}" th:object="${changePasswordForm}" method="post" novalidate>
+            <form th:action="@{/account/password}" th:object="${changePasswordForm}" method="post"
+                  class="needs-validation" novalidate>
                 <div th:replace="~{fragments/form-errors :: globals}"></div>
                 <div class="mb-3">
                     <label class="form-label" for="currentPassword">Current password</label>
-                    <input id="currentPassword" type="password" th:field="*{currentPassword}"
+                    <input id="currentPassword" type="password" th:field="*{currentPassword}" required
                            class="form-control" th:classappend="${#fields.hasErrors('currentPassword')} ? 'is-invalid'"/>
+                    <div class="invalid-feedback">Please enter your current password.</div>
                     <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('currentPassword')})}"></div>
                 </div>
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label" for="newPassword">New password</label>
                         <input id="newPassword" type="password" th:field="*{newPassword}"
+                               required minlength="8" maxlength="100"
                                class="form-control" th:classappend="${#fields.hasErrors('newPassword')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Password must be between 8 and 100 characters.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('newPassword')})}"></div>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="confirmPassword">Confirm new password</label>
-                        <input id="confirmPassword" type="password" th:field="*{confirmPassword}"
+                        <input id="confirmPassword" type="password" th:field="*{confirmPassword}" required
                                class="form-control" th:classappend="${#fields.hasErrors('confirmPassword')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please confirm your new password.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('confirmPassword')})}"></div>
                     </div>
                 </div>
@@ -47,18 +52,21 @@
             <div id="deactivate-form" class="collapse mt-3"
                  th:classappend="${#fields.hasErrors('${deactivateForm.*}')} ? 'show'">
                 <form th:action="@{/account/deactivate}" th:object="${deactivateForm}" method="post"
+                      class="needs-validation"
                       onsubmit="return confirm('Deactivate your account? This cannot be undone from the UI.');"
                       novalidate>
                     <div th:replace="~{fragments/form-errors :: globals}"></div>
                     <div class="mb-3">
                         <label class="form-label" for="dpassword">Confirm password</label>
-                        <input id="dpassword" type="password" th:field="*{password}"
+                        <input id="dpassword" type="password" th:field="*{password}" required
                                class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'"/>
+                        <div class="invalid-feedback">Please enter your password to confirm.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('password')})}"></div>
                     </div>
                     <div class="form-check mb-3">
-                        <input id="confirm" type="checkbox" th:field="*{confirm}" class="form-check-input"/>
+                        <input id="confirm" type="checkbox" th:field="*{confirm}" required class="form-check-input"/>
                         <label class="form-check-label" for="confirm">I understand and want to deactivate.</label>
+                        <div class="invalid-feedback">You must confirm to proceed.</div>
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('confirm')})}"></div>
                     </div>
                     <button type="submit" class="btn btn-danger">Permanently deactivate</button>

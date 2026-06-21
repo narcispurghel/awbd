@@ -4,6 +4,30 @@
 // Wire-up: put data-breed-filter-source on the species <select> and
 // data-breed-filter-target on the breed <select>; each breed <option> must
 // carry data-species-id="...".
+
+// Client-side validation (Bootstrap "needs-validation" pattern): on submit,
+// block the request and reveal field-level messages when any HTML5 constraint
+// (required, type, pattern, minlength, maxlength, min...) fails. Server-side
+// Bean Validation still runs as the authoritative check.
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    var forms = document.querySelectorAll('form.needs-validation');
+    Array.prototype.forEach.call(forms, function (form) {
+      form.addEventListener(
+        'submit',
+        function (event) {
+          if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+          form.classList.add('was-validated');
+        },
+        false
+      );
+    });
+  });
+})();
+
 (function () {
   function applyFilter(speciesSelect, breedSelect) {
     var selectedSpeciesId = speciesSelect.value;
