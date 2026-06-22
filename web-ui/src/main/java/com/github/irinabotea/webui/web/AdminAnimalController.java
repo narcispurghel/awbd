@@ -103,6 +103,30 @@ public class AdminAnimalController {
     return "admin/animals/form";
   }
 
+  @GetMapping("/{animalId}/medical-records/{recordId}/edit")
+  public String editMedicalRecordPage(
+    @PathVariable UUID animalId,
+    @PathVariable UUID recordId,
+    Model model
+  ) {
+    AnimalDtos.AnimalView animal;
+    try {
+      animal = animals.get(animalId);
+    } catch (BackendException ex) {
+      return "redirect:/animals";
+    }
+    if (!model.containsAttribute("medicalRecordForm")) {
+      try {
+        model.addAttribute("medicalRecordForm", toForm(animals.getMedicalRecord(animalId, recordId)));
+      } catch (BackendException ex) {
+        return "redirect:/animals/" + animalId + "#medical";
+      }
+    }
+    model.addAttribute("animal", animal);
+    model.addAttribute("recordId", recordId);
+    return "admin/animals/medical-record-form";
+  }
+
   @PostMapping("/{id}")
   public String update(
     @PathVariable UUID id,
@@ -201,6 +225,40 @@ public class AdminAnimalController {
     return "redirect:/animals/" + animalId + "#medical";
   }
 
+  @PostMapping("/{animalId}/medical-records/{recordId}")
+  public String updateMedicalRecord(
+    @PathVariable UUID animalId,
+    @PathVariable UUID recordId,
+    @Valid @ModelAttribute("medicalRecordForm") MedicalRecordForm form,
+    BindingResult binding,
+    Model model,
+    RedirectAttributes flash
+  ) {
+    if (binding.hasErrors()) {
+      try {
+        model.addAttribute("animal", animals.get(animalId));
+      } catch (BackendException ex) {
+        return "redirect:/animals";
+      }
+      model.addAttribute("recordId", recordId);
+      return "admin/animals/medical-record-form";
+    }
+    try {
+      animals.updateMedicalRecord(animalId, recordId, toMedicalRequest(form));
+      flash.addFlashAttribute("success", "Medical record updated.");
+      return "redirect:/animals/" + animalId + "#medical";
+    } catch (BackendException ex) {
+      applyBackendErrors(binding, ex);
+      try {
+        model.addAttribute("animal", animals.get(animalId));
+      } catch (BackendException ignored) {
+        return "redirect:/animals";
+      }
+      model.addAttribute("recordId", recordId);
+      return "admin/animals/medical-record-form";
+    }
+  }
+
   @PostMapping("/{id}/medical-records")
   public String addMedicalRecord(
     @PathVariable UUID id,
@@ -228,6 +286,7 @@ public class AdminAnimalController {
     model.addAttribute("shelterOptions", animals.shelters());
     model.addAttribute("speciesOptions", animals.species());
     model.addAttribute("breedOptions", animals.breeds(null));
+    model.addAttribute("tagOptions", animals.tags());
     model.addAttribute("statuses", AnimalDtos.AnimalStatus.values());
     model.addAttribute("sexes", AnimalDtos.Sex.values());
     model.addAttribute(
@@ -253,6 +312,18 @@ public class AdminAnimalController {
     f.setAdoptionFee(v.adoptionFee());
     f.setVaccinated(v.vaccinated());
     f.setNeutered(v.neutered());
+    f.setTagIds(v.tags().stream().map(AnimalDtos.TagView::id).toList());
+    return f;
+  }
+
+  private static MedicalRecordForm toForm(AnimalDtos.MedicalRecordView v) {
+    MedicalRecordForm f = new MedicalRecordForm();
+    f.setTitle(v.title());
+    f.setExaminationDate(v.examinationDate());
+    f.setTreatment(v.treatment());
+    f.setNotes(v.notes());
+    f.setWeightKg(v.weightKg());
+    f.setFollowUpRequired(v.followUpRequired());
     return f;
   }
 
@@ -271,7 +342,8 @@ public class AdminAnimalController {
       requireNonNull(f.getIntakeDate(), "intakeDate"),
       f.getAdoptionFee(),
       f.isVaccinated(),
-      f.isNeutered()
+      f.isNeutered(),
+      f.getTagIds()
     );
   }
 

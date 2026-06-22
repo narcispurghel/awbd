@@ -122,6 +122,10 @@ public final class BackendDtos {
 
     public record UpsertBreedRequest(UUID speciesId, String name) {}
 
+    public record TagView(UUID id, String name) {}
+
+    public record UpsertTagRequest(String name) {}
+
     public record AnimalSummary(
       UUID id,
       String name,
@@ -132,7 +136,8 @@ public final class BackendDtos {
       UUID speciesId,
       String speciesName,
       @Nullable UUID breedId,
-      @Nullable String breedName
+      @Nullable String breedName,
+      List<TagView> tags
     ) {}
 
     public record AnimalView(
@@ -151,7 +156,8 @@ public final class BackendDtos {
       LocalDate intakeDate,
       @Nullable BigDecimal adoptionFee,
       boolean vaccinated,
-      boolean neutered
+      boolean neutered,
+      List<TagView> tags
     ) {}
 
     public record UpsertAnimalRequest(
@@ -166,7 +172,8 @@ public final class BackendDtos {
       LocalDate intakeDate,
       @Nullable BigDecimal adoptionFee,
       boolean vaccinated,
-      boolean neutered
+      boolean neutered,
+      List<UUID> tagIds
     ) {}
 
     public record MedicalRecordView(

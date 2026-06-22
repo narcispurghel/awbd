@@ -80,6 +80,13 @@
                 <dt class="col-sm-3">Shelter</dt>
                 <dd class="col-sm-9" th:text="${animal.shelterName}">Shelter</dd>
 
+                <dt class="col-sm-3">Tags</dt>
+                <dd class="col-sm-9">
+                    <span th:if="${#lists.isEmpty(animal.tags)}">—</span>
+                    <span th:each="tag : ${animal.tags}" class="badge text-bg-light border me-1"
+                          th:text="${tag.name}">Tag</span>
+                </dd>
+
                 <dt class="col-sm-3">Birth date</dt>
                 <dd class="col-sm-9" th:text="${animal.birthDate} ?: '—'">Birth date</dd>
 
@@ -143,6 +150,12 @@
                         <span th:if="${r.followUpRequired}" class="badge text-bg-warning">
                             <i class="bi bi-flag me-1"></i>Follow-up
                         </span>
+                        <a sec:authorize="hasRole('ADMIN')"
+                           th:href="@{/admin/animals/{aid}/medical-records/{rid}/edit(aid=${animal.id},rid=${r.id})}"
+                           class="btn btn-sm btn-outline-secondary"
+                           title="Edit record">
+                            <i class="bi bi-pencil"></i>
+                        </a>
                         <form sec:authorize="hasRole('ADMIN')"
                               th:action="@{/admin/animals/{aid}/medical-records/{rid}/delete(aid=${animal.id},rid=${r.id})}"
                               method="post"
