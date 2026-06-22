@@ -4,6 +4,7 @@ import java.net.URI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,6 +40,12 @@ public class S3Config {
   }
 
   @Bean
+  @ConditionalOnProperty(
+    prefix = "storage.s3",
+    name = "bootstrap-enabled",
+    havingValue = "true",
+    matchIfMissing = true
+  )
   public ApplicationRunner bucketBootstrap(S3Client s3, StorageProperties props) {
     return args -> {
       try {

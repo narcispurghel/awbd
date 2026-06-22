@@ -3,6 +3,7 @@ package com.github.narcispurghel.animalservice.service;
 import com.github.narcispurghel.animalservice.dto.AnimalDtos;
 import com.github.narcispurghel.animalservice.entity.Animal;
 import com.github.narcispurghel.animalservice.entity.AnimalStatus;
+import com.github.narcispurghel.animalservice.entity.AnimalTag;
 import com.github.narcispurghel.animalservice.entity.Breed;
 import com.github.narcispurghel.animalservice.entity.MedicalRecord;
 import com.github.narcispurghel.animalservice.entity.Shelter;
@@ -12,8 +13,12 @@ import com.github.narcispurghel.animalservice.repository.BreedJpaRepository;
 import com.github.narcispurghel.animalservice.repository.MedicalRecordJpaRepository;
 import com.github.narcispurghel.animalservice.repository.ShelterJpaRepository;
 import com.github.narcispurghel.animalservice.repository.SpeciesJpaRepository;
+import com.github.narcispurghel.animalservice.repository.AnimalTagJpaRepository;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Page;
@@ -31,6 +36,7 @@ public class AnimalCatalogService {
   private final ShelterJpaRepository shelterRepository;
   private final SpeciesJpaRepository speciesRepository;
   private final BreedJpaRepository breedRepository;
+  private final AnimalTagJpaRepository tagRepository;
   private final AnimalJpaRepository animalRepository;
   private final MedicalRecordJpaRepository medicalRecordRepository;
   private final AnimalPhotoService animalPhotoService;
@@ -39,6 +45,7 @@ public class AnimalCatalogService {
     ShelterJpaRepository shelterRepository,
     SpeciesJpaRepository speciesRepository,
     BreedJpaRepository breedRepository,
+    AnimalTagJpaRepository tagRepository,
     AnimalJpaRepository animalRepository,
     MedicalRecordJpaRepository medicalRecordRepository,
     AnimalPhotoService animalPhotoService
@@ -46,6 +53,7 @@ public class AnimalCatalogService {
     this.shelterRepository = shelterRepository;
     this.speciesRepository = speciesRepository;
     this.breedRepository = breedRepository;
+    this.tagRepository = tagRepository;
     this.animalRepository = animalRepository;
     this.medicalRecordRepository = medicalRecordRepository;
     this.animalPhotoService = animalPhotoService;
@@ -130,6 +138,31 @@ public class AnimalCatalogService {
       throw conflict("Breed still has animals and cannot be deleted");
     }
     breedRepository.delete(breed);
+  }
+
+  @Transactional(readOnly = true)
+  public List<AnimalDtos.TagView> tags() {
+    return tagRepository.findAllByOrderByNameAsc().stream().map(this::toTagView).toList();
+  }
+
+  public AnimalDtos.TagView createTag(AnimalDtos.UpsertTagRequest body) {
+    AnimalTag tag = new AnimalTag();
+    tag.setName(normalizeName(body.name()));
+    return toTagView(tagRepository.save(tag));
+  }
+
+  public AnimalDtos.TagView updateTag(UUID id, AnimalDtos.UpsertTagRequest body) {
+    AnimalTag tag = requireTag(id);
+    tag.setName(normalizeName(body.name()));
+    return toTagView(tag);
+  }
+
+  public void deleteTag(UUID id) {
+    AnimalTag tag = requireTag(id);
+    if (animalRepository.existsByTagsId(id)) {
+      throw conflict("Tag is still assigned to animals and cannot be deleted");
+    }
+    tagRepository.delete(tag);
   }
 
   @Transactional(readOnly = true)
@@ -229,6 +262,16 @@ public class AnimalCatalogService {
     return toMedicalRecordView(medicalRecordRepository.save(record));
   }
 
+  @Transactional(readOnly = true)
+  public AnimalDtos.MedicalRecordView medicalRecord(UUID animalId, UUID recordId) {
+    requireAnimal(animalId);
+    MedicalRecord record = requireMedicalRecord(recordId);
+    if (!record.getAnimal().getId().equals(animalId)) {
+      throw notFound("Medical record does not belong to the requested animal");
+    }
+    return toMedicalRecordView(record);
+  }
+
   public AnimalDtos.MedicalRecordView updateMedicalRecord(
     UUID animalId,
     UUID recordId,
@@ -281,6 +324,7 @@ public class AnimalCatalogService {
     animal.setAdoptionFee(body.adoptionFee());
     animal.setVaccinated(body.vaccinated());
     animal.setNeutered(body.neutered());
+    animal.setTags(resolveTags(body.tagIds()));
   }
 
   private void applyMedicalRecord(
@@ -307,6 +351,10 @@ public class AnimalCatalogService {
     return breedRepository.findById(id).orElseThrow(() -> notFound("Breed not found"));
   }
 
+  private AnimalTag requireTag(UUID id) {
+    return tagRepository.findById(id).orElseThrow(() -> notFound("Tag not found"));
+  }
+
   private Animal requireAnimal(UUID id) {
     return animalRepository.findById(id).orElseThrow(() -> notFound("Animal not found"));
   }
@@ -326,6 +374,19 @@ public class AnimalCatalogService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Breed does not match species");
     }
     return breed;
+  }
+
+  private Set<AnimalTag> resolveTags(@Nullable List<UUID> tagIds) {
+    if (tagIds == null || tagIds.isEmpty()) {
+      return new LinkedHashSet<>();
+    }
+    Set<UUID> uniqueIds = new LinkedHashSet<>(tagIds);
+    List<AnimalTag> found = new ArrayList<>(tagRepository.findAllById(uniqueIds));
+    if (found.size() != uniqueIds.size()) {
+      throw notFound("Tag not found");
+    }
+    found.sort((left, right) -> left.getName().compareToIgnoreCase(right.getName()));
+    return new LinkedHashSet<>(found);
   }
 
   private String normalizeName(String value) {
@@ -365,6 +426,19 @@ public class AnimalCatalogService {
     );
   }
 
+  private AnimalDtos.TagView toTagView(AnimalTag tag) {
+    return new AnimalDtos.TagView(tag.getId(), tag.getName());
+  }
+
+  private List<AnimalDtos.TagView> toTagViews(Animal animal) {
+    return animal
+      .getTags()
+      .stream()
+      .sorted((left, right) -> left.getName().compareToIgnoreCase(right.getName()))
+      .map(this::toTagView)
+      .toList();
+  }
+
   private AnimalDtos.AnimalSummary toAnimalSummary(Animal animal) {
     Breed breed = animal.getBreed();
     return new AnimalDtos.AnimalSummary(
@@ -377,7 +451,8 @@ public class AnimalCatalogService {
       animal.getSpecies().getId(),
       animal.getSpecies().getName(),
       breed == null ? null : breed.getId(),
-      breed == null ? null : breed.getName()
+      breed == null ? null : breed.getName(),
+      toTagViews(animal)
     );
   }
 
@@ -399,7 +474,8 @@ public class AnimalCatalogService {
       animal.getIntakeDate(),
       animal.getAdoptionFee(),
       animal.isVaccinated(),
-      animal.isNeutered()
+      animal.isNeutered(),
+      toTagViews(animal)
     );
   }
 

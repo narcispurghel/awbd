@@ -84,4 +84,31 @@ public class TaxonomyController {
   public void deleteBreed(@PathVariable UUID id) {
     animalCatalogService.deleteBreed(id);
   }
+
+  @GetMapping("/tags")
+  public List<AnimalDtos.TagView> tags() {
+    return animalCatalogService.tags();
+  }
+
+  @PostMapping("/tags")
+  @PreAuthorize("hasRole('ADMIN')")
+  public AnimalDtos.TagView createTag(@Valid @RequestBody AnimalDtos.UpsertTagRequest body) {
+    return animalCatalogService.createTag(body);
+  }
+
+  @PutMapping("/tags/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  public AnimalDtos.TagView updateTag(
+    @PathVariable UUID id,
+    @Valid @RequestBody AnimalDtos.UpsertTagRequest body
+  ) {
+    return animalCatalogService.updateTag(id, body);
+  }
+
+  @DeleteMapping("/tags/{id}")
+  @PreAuthorize("hasRole('ADMIN')")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteTag(@PathVariable UUID id) {
+    animalCatalogService.deleteTag(id);
+  }
 }

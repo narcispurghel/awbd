@@ -72,6 +72,15 @@ class AnimalControllerIntegrationTest {
       """.formatted(speciesId)
     );
 
+    String tagId = create(
+      "/api/v1/tags",
+      """
+      {
+        "name": "Good with kids"
+      }
+      """
+    );
+
     String animalId = create(
       "/api/v1/animals",
       """
@@ -87,9 +96,10 @@ class AnimalControllerIntegrationTest {
         "intakeDate": "2025-01-10",
         "adoptionFee": 120.00,
         "vaccinated": true,
-        "neutered": true
+        "neutered": true,
+        "tagIds": ["%s"]
       }
-      """.formatted(shelterId, speciesId, breedId)
+      """.formatted(shelterId, speciesId, breedId, tagId)
     );
 
     mockMvc
@@ -102,7 +112,8 @@ class AnimalControllerIntegrationTest {
       .perform(get("/api/v1/animals/{id}", animalId).headers(userHeaders()))
       .andExpect(status().isOk())
       .andExpect(jsonPath("$.name").value("Milo"))
-      .andExpect(jsonPath("$.breedName").value("Labrador Retriever"));
+      .andExpect(jsonPath("$.breedName").value("Labrador Retriever"))
+      .andExpect(jsonPath("$.tags[0].name").value("Good with kids"));
 
     mockMvc
       .perform(
@@ -150,8 +161,20 @@ class AnimalControllerIntegrationTest {
   }
 
   @Test
-  void unauthenticatedRequestIsRejected() throws Exception {
-    mockMvc.perform(get("/api/v1/animals")).andExpect(status().isUnauthorized());
+  void unauthenticatedWriteRequestIsRejected() throws Exception {
+    mockMvc
+      .perform(
+        post("/api/v1/tags")
+          .contentType(MediaType.APPLICATION_JSON)
+          .content(
+            """
+            {
+              "name": "Quiet"
+            }
+            """
+          )
+      )
+      .andExpect(status().isUnauthorized());
   }
 
   private String create(String path, String body) throws Exception {

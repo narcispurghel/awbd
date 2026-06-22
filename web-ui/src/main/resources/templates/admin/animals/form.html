@@ -94,6 +94,15 @@
                         <div th:replace="~{fragments/form-errors :: errors(${#fields.errors('breedId')})}"></div>
                     </div>
 
+                    <div class="col-12">
+                        <label class="form-label" for="tagIds">Tags <span class="text-muted small">(optional)</span></label>
+                        <select id="tagIds" th:field="*{tagIds}" multiple size="4" class="form-select">
+                            <option th:each="t : ${tagOptions}"
+                                    th:value="${t.id}"
+                                    th:text="${t.name}">Tag</option>
+                        </select>
+                    </div>
+
                     <div class="col-md-6">
                         <label class="form-label" for="intakeDate">Intake date</label>
                         <input id="intakeDate" type="date" th:field="*{intakeDate}" required

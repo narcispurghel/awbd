@@ -18,7 +18,7 @@ spring:
             - id: animal-service-api
               uri: lb://animal-service
               predicates:
-                - Path=/api/v1/shelters/**,/api/v1/species/**,/api/v1/breeds/**,/api/v1/animals/**
+                - Path=/api/v1/shelters/**,/api/v1/species/**,/api/v1/breeds/**,/api/v1/tags/**,/api/v1/animals/**
             - id: user-service-api
               uri: lb://user-service
               predicates:

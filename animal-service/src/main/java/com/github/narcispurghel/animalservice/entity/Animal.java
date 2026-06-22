@@ -8,11 +8,15 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 
@@ -68,6 +72,14 @@ public class Animal {
 
   @Column(nullable = false)
   private boolean neutered;
+
+  @ManyToMany
+  @JoinTable(
+    name = "animal_tag_assignments",
+    joinColumns = @JoinColumn(name = "animal_id"),
+    inverseJoinColumns = @JoinColumn(name = "tag_id")
+  )
+  private Set<AnimalTag> tags = new LinkedHashSet<>();
 
   @SuppressWarnings("NullAway.Init")
   public Animal() {
@@ -177,5 +189,13 @@ public class Animal {
 
   public void setNeutered(boolean neutered) {
     this.neutered = neutered;
+  }
+
+  public Set<AnimalTag> getTags() {
+    return tags;
+  }
+
+  public void setTags(Set<AnimalTag> tags) {
+    this.tags = tags;
   }
 }

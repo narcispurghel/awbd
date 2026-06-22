@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -48,6 +50,8 @@ public class AnimalForm {
 
   private boolean neutered;
 
+  private List<UUID> tagIds = new ArrayList<>();
+
   public String getName() { return name; }
   public void setName(String name) { this.name = name; }
 
@@ -83,4 +87,7 @@ public class AnimalForm {
 
   public boolean isNeutered() { return neutered; }
   public void setNeutered(boolean neutered) { this.neutered = neutered; }
+
+  public List<UUID> getTagIds() { return tagIds; }
+  public void setTagIds(List<UUID> tagIds) { this.tagIds = tagIds; }
 }

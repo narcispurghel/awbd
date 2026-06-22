@@ -26,6 +26,7 @@ public interface AnimalJpaRepository
   boolean existsByShelterId(UUID shelterId);
   boolean existsBySpeciesId(UUID speciesId);
   boolean existsByBreedId(UUID breedId);
+  boolean existsByTagsId(UUID tagId);
 
   default List<Animal> filter(
     @Nullable AnimalStatus status,

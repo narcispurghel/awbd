@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import com.github.narcispurghel.animalservice.dto.AnimalDtos;
 import com.github.narcispurghel.animalservice.entity.Animal;
 import com.github.narcispurghel.animalservice.entity.AnimalStatus;
+import com.github.narcispurghel.animalservice.entity.AnimalTag;
 import com.github.narcispurghel.animalservice.entity.Breed;
 import com.github.narcispurghel.animalservice.entity.MedicalRecord;
 import com.github.narcispurghel.animalservice.entity.Sex;
@@ -19,6 +20,7 @@ import com.github.narcispurghel.animalservice.entity.Shelter;
 import com.github.narcispurghel.animalservice.entity.Species;
 import com.github.narcispurghel.animalservice.repository.AnimalJpaRepository;
 import com.github.narcispurghel.animalservice.repository.AnimalPhotoJpaRepository;
+import com.github.narcispurghel.animalservice.repository.AnimalTagJpaRepository;
 import com.github.narcispurghel.animalservice.repository.BreedJpaRepository;
 import com.github.narcispurghel.animalservice.repository.MedicalRecordJpaRepository;
 import com.github.narcispurghel.animalservice.repository.ShelterJpaRepository;
@@ -37,6 +39,7 @@ class AnimalCatalogServiceTest {
   private final ShelterJpaRepository shelterRepository = mock(ShelterJpaRepository.class);
   private final SpeciesJpaRepository speciesRepository = mock(SpeciesJpaRepository.class);
   private final BreedJpaRepository breedRepository = mock(BreedJpaRepository.class);
+  private final AnimalTagJpaRepository tagRepository = mock(AnimalTagJpaRepository.class);
   private final AnimalJpaRepository animalRepository = mock(AnimalJpaRepository.class);
   private final MedicalRecordJpaRepository medicalRecordRepository =
     mock(MedicalRecordJpaRepository.class);
@@ -60,6 +63,7 @@ class AnimalCatalogServiceTest {
       shelterRepository,
       speciesRepository,
       breedRepository,
+      tagRepository,
       animalRepository,
       medicalRecordRepository,
       animalPhotoService
@@ -188,6 +192,32 @@ class AnimalCatalogServiceTest {
     assertThat(ex.getStatusCode().value()).isEqualTo(409);
   }
 
+  // ----- tags -----
+
+  @Test
+  void createTag_normalizesAndReturnsView() {
+    when(tagRepository.save(any(AnimalTag.class))).thenAnswer(inv -> inv.getArgument(0));
+
+    AnimalDtos.TagView view = service.createTag(new AnimalDtos.UpsertTagRequest("  Good with kids  "));
+
+    assertThat(view.name()).isEqualTo("Good with kids");
+  }
+
+  @Test
+  void deleteTag_assignedToAnimals_throws409() {
+    UUID id = UUID.randomUUID();
+    when(tagRepository.findById(id)).thenReturn(Optional.of(tag(id, "Senior")));
+    when(animalRepository.existsByTagsId(id)).thenReturn(true);
+
+    ResponseStatusException ex = catchThrowableOfType(
+      () -> service.deleteTag(id),
+      ResponseStatusException.class
+    );
+
+    assertThat(ex.getStatusCode().value()).isEqualTo(409);
+    verify(tagRepository, never()).delete(any());
+  }
+
   // ----- animals -----
 
   @Test
@@ -196,9 +226,11 @@ class AnimalCatalogServiceTest {
     UUID speciesId = UUID.randomUUID();
     UUID breedId = UUID.randomUUID();
     Species species = species(speciesId, "Dog");
+    AnimalTag tag = tag(UUID.randomUUID(), "Good with kids");
     when(shelterRepository.findById(shelterId)).thenReturn(Optional.of(shelter(shelterId)));
     when(speciesRepository.findById(speciesId)).thenReturn(Optional.of(species));
     when(breedRepository.findById(breedId)).thenReturn(Optional.of(breed(breedId, species, "Labrador")));
+    when(tagRepository.findAllById(any())).thenReturn(List.of(tag));
     when(animalRepository.save(any(Animal.class))).thenAnswer(inv -> inv.getArgument(0));
 
     AnimalDtos.AnimalView view = service.createAnimal(
@@ -214,7 +246,8 @@ class AnimalCatalogServiceTest {
         LocalDate.of(2025, 1, 1),
         new BigDecimal("120.00"),
         true,
-        true
+        true,
+        List.of(tag.getId())
       )
     );
 
@@ -222,6 +255,7 @@ class AnimalCatalogServiceTest {
     assertThat(view.speciesName()).isEqualTo("Dog");
     assertThat(view.breedName()).isEqualTo("Labrador");
     assertThat(view.status()).isEqualTo(AnimalStatus.AVAILABLE);
+    assertThat(view.tags()).extracting(AnimalDtos.TagView::name).containsExactly("Good with kids");
   }
 
   @Test
@@ -248,7 +282,8 @@ class AnimalCatalogServiceTest {
             LocalDate.of(2025, 1, 1),
             null,
             false,
-            false
+            false,
+            List.of()
           )
         ),
       ResponseStatusException.class
@@ -390,6 +425,13 @@ class AnimalCatalogServiceTest {
     breed.setName(name);
     ReflectionTestUtils.setField(breed, "id", id);
     return breed;
+  }
+
+  private static AnimalTag tag(UUID id, String name) {
+    AnimalTag tag = new AnimalTag();
+    tag.setName(name);
+    ReflectionTestUtils.setField(tag, "id", id);
+    return tag;
   }
 
   private static Animal animal(UUID id) {

@@ -98,7 +98,7 @@ Fiecare serviciu de business respecta o impartire pe pachete in controller, serv
 
 ## Model de date
 
-Modelul cuprinde noua entitati persistente, distribuite pe trei servicii cu baze de date proprii.
+Modelul cuprinde zece entitati persistente, distribuite pe trei servicii cu baze de date proprii.
 
 user-service:
 - User: cont de utilizator cu email, parola criptata, rol si stare activa
@@ -109,6 +109,7 @@ animal-service:
 - Species: specie
 - Breed: rasa, legata de o specie
 - Animal: animalul, cu nume, status, sex, descriere, date si taxa de adoptie
+- AnimalTag: eticheta reutilizabila pentru trasaturi sau nevoi speciale ale animalelor
 - AnimalPhoto: poza atasata unui animal, cu cheia obiectului din stocare
 - MedicalRecord: fisa medicala atasata unui animal
 
@@ -118,6 +119,7 @@ adoption-service:
 Relatiile dintre entitati acopera mai multe tipuri:
 - O relatie OneToOne intre User si AdopterProfile.
 - Relatii OneToMany si ManyToOne pentru legaturile dintre Shelter si Animal, Species si Breed, Species si Animal, Breed si Animal, Animal si AnimalPhoto, Animal si MedicalRecord.
+- O relatie ManyToMany intre Animal si AnimalTag, implementata prin tabela de legatura animal_tag_assignments.
 
 AdoptionRequest face parte dintr-un alt serviciu si referentiaza animalul si adoptatorul prin identificatori de tip UUID, nu prin chei straine la nivel de baza de date, in conformitate cu separarea pe servicii.
 
@@ -132,6 +134,7 @@ erDiagram
     SPECIES ||--o{ BREED : "are rase"
     SPECIES ||--o{ ANIMAL : "clasifica"
     BREED ||--o{ ANIMAL : "specifica"
+    ANIMAL }o--o{ ANIMAL_TAG : "are etichete"
     ANIMAL ||--o{ ANIMAL_PHOTO : "are poze"
     ANIMAL ||--o{ MEDICAL_RECORD : "are fise"
     ADOPTION_REQUEST }o--|| ANIMAL : "pentru animal (UUID)"
@@ -174,6 +177,10 @@ erDiagram
         string sex
         date intakeDate
     }
+    ANIMAL_TAG {
+        uuid id
+        string name
+    }
     ANIMAL_PHOTO {
         uuid id
         string objectKey
@@ -198,13 +205,13 @@ Pentru referinta, o varianta a modelului de date este pastrata si in folderul do
 
 Fiecare entitate principala are operatii complete de creare, citire, actualizare si stergere expuse prin REST.
 
-- Adaposturile, speciile, rasele si animalele se pot crea, lista, modifica si sterge.
+- Adaposturile, speciile, rasele, etichetele si animalele se pot crea, lista, modifica si sterge.
 - Fisele medicale se pot crea, lista, modifica si sterge pentru un animal.
 - Pozele de animal se pot incarca, lista si sterge.
 - Cererile de adoptie se pot crea, lista, vedea, evalua, anula si sterge.
 - Utilizatorul are citire de profil, actualizare profil, schimbare parola si dezactivare cont, iar administratorul poate sterge un utilizator.
 
-Operatiile de stergere sunt permise doar pentru rolul ADMIN. La stergere se verifica integritatea referentiala. De exemplu, un adapost, o specie sau o rasa care inca au animale asociate nu pot fi sterse si raspunsul este de tip conflict. La stergerea unui animal se sterg si pozele si fisele medicale asociate, iar la stergerea unui utilizator se sterge si profilul de adoptator.
+Operatiile de stergere sunt permise doar pentru rolul ADMIN. La stergere se verifica integritatea referentiala. De exemplu, un adapost, o specie, o rasa sau o eticheta care inca au animale asociate nu pot fi sterse si raspunsul este de tip conflict. La stergerea unui animal se sterg si pozele si fisele medicale asociate, iar la stergerea unui utilizator se sterge si profilul de adoptator.
 
 ## Strat de repository si strat de service
 
@@ -236,7 +243,7 @@ Interfata ofera navigare intre pagini, selector pentru dimensiunea paginii cu va
 
 ## Logging
 
-Logarea foloseste SLF4J cu Logback. Fiecare serviciu are o configurare logback-spring.xml cu un appender de consola si un appender de fisier care scrie separat erorile in folderul logs. Nivelurile de logare sunt configurate pe profil. In modulul common exista un aspect care logheaza apelurile din stratul de service, cu durata si erori.
+Logarea foloseste SLF4J cu Logback. Fiecare serviciu executabil are o configurare logback-spring.xml cu appender de consola, fisier general logs/<serviciu>.log si fisier separat pentru erori logs/<serviciu>-error.log. Nivelurile implicite tin codul aplicatiei la INFO si Spring la WARN.
 
 ## Testare
 
@@ -255,7 +262,7 @@ Toate apelurile externe trec prin api-gateway, sub prefixul /api/v1.
 - /api/v1/auth: inregistrare, autentificare si delogare
 - /api/v1/users: profil propriu, schimbare parola, dezactivare cont, administrare utilizator
 - /api/v1/shelters: adaposturi
-- /api/v1/species si /api/v1/breeds: taxonomie
+- /api/v1/species, /api/v1/breeds si /api/v1/tags: taxonomie si etichete
 - /api/v1/animals: animale, fise medicale si poze
 - /api/v1/adoptions: cereri de adoptie
 
@@ -263,7 +270,7 @@ Cererile de tip citire pentru catalog sunt accesibile public. Operatiile de crea
 
 ## Interfata
 
-Interfata este server-side, redata cu Thymeleaf si stilizata cu Bootstrap. Cuprinde o pagina principala cu un carusel de animale disponibile, paginile de autentificare si inregistrare, profilul si setarile de cont, lista si detaliul de animal, lista cererilor proprii de adoptie si zona de administrare cu formulare pentru adaposturi, specii, rase, animale, fise medicale si cereri de adoptie. Toate formularele de tip CRUD au validare pe server si pe client.
+Interfata este server-side, redata cu Thymeleaf si stilizata cu Bootstrap. Cuprinde o pagina principala cu un carusel de animale disponibile, paginile de autentificare si inregistrare, profilul si setarile de cont, lista si detaliul de animal, lista cererilor proprii de adoptie si zona de administrare cu formulare pentru adaposturi, specii, rase, etichete, animale, fise medicale si cereri de adoptie. Toate formularele de tip CRUD au validare pe server si pe client.
 
 ## Componente avansate
 

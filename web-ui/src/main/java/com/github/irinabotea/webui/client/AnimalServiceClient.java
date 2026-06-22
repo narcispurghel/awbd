@@ -21,6 +21,9 @@ public class AnimalServiceClient {
     List<BackendDtos.AnimalDtos.BreedView>
   > BREED_LIST = new ParameterizedTypeReference<>() {};
   private static final ParameterizedTypeReference<
+    List<BackendDtos.AnimalDtos.TagView>
+  > TAG_LIST = new ParameterizedTypeReference<>() {};
+  private static final ParameterizedTypeReference<
     List<BackendDtos.AnimalDtos.AnimalPhotoView>
   > PHOTO_LIST = new ParameterizedTypeReference<>() {};
   private static final ParameterizedTypeReference<
@@ -107,6 +110,28 @@ public class AnimalServiceClient {
     );
   }
 
+  public BackendDtos.AnimalDtos.MedicalRecordView getMedicalRecord(
+    UUID animalId,
+    UUID recordId
+  ) {
+    return http.get(
+      "/api/v1/animals/" + animalId + "/medical-records/" + recordId,
+      BackendDtos.AnimalDtos.MedicalRecordView.class
+    );
+  }
+
+  public BackendDtos.AnimalDtos.MedicalRecordView updateMedicalRecord(
+    UUID animalId,
+    UUID recordId,
+    BackendDtos.AnimalDtos.UpsertMedicalRecordRequest body
+  ) {
+    return http.put(
+      "/api/v1/animals/" + animalId + "/medical-records/" + recordId,
+      body,
+      BackendDtos.AnimalDtos.MedicalRecordView.class
+    );
+  }
+
   public void deleteMedicalRecord(UUID animalId, UUID recordId) {
     http.delete("/api/v1/animals/" + animalId + "/medical-records/" + recordId);
   }
@@ -180,6 +205,29 @@ public class AnimalServiceClient {
 
   public void deleteBreed(UUID id) {
     http.delete("/api/v1/breeds/" + id);
+  }
+
+  public List<BackendDtos.AnimalDtos.TagView> tags() {
+    return http.get("/api/v1/tags", TAG_LIST);
+  }
+
+  public BackendDtos.AnimalDtos.@Nullable TagView findTag(UUID id) {
+    for (BackendDtos.AnimalDtos.TagView t : tags()) {
+      if (id.equals(t.id())) return t;
+    }
+    return null;
+  }
+
+  public BackendDtos.AnimalDtos.TagView createTag(BackendDtos.AnimalDtos.UpsertTagRequest body) {
+    return http.post("/api/v1/tags", body, BackendDtos.AnimalDtos.TagView.class);
+  }
+
+  public BackendDtos.AnimalDtos.TagView updateTag(UUID id, BackendDtos.AnimalDtos.UpsertTagRequest body) {
+    return http.put("/api/v1/tags/" + id, body, BackendDtos.AnimalDtos.TagView.class);
+  }
+
+  public void deleteTag(UUID id) {
+    http.delete("/api/v1/tags/" + id);
   }
 
   public List<BackendDtos.AnimalDtos.AnimalPhotoView> photos(UUID animalId) {
