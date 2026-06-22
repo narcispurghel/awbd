@@ -34,7 +34,7 @@ The current runtime flow is:
 | `eureka-server`     | 8761 | Service discovery                                                          |
 | `api-gateway`       | 8080 | Single entry point, routing, JWT validation, identity-header forwarding    |
 | `adoption-service`  | 8083 | Adoption-request lifecycle APIs plus RabbitMQ event publication            |
-| `animal-service`    | 8082 | Animal catalog, shelter, species, breed, and medical record APIs          |
+| `animal-service`    | 8082 | Animal catalog, shelter, species, breed, tag, and medical record APIs     |
 | `notification-service` | 8084 | RabbitMQ consumer for adoption lifecycle notifications                    |
 | `user-service`      | 8081 | Authentication, user account, and adopter profile APIs                    |
 | `web-ui`            | 8090 | Thymeleaf web client for auth, profile, and account settings              |
