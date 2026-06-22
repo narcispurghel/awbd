@@ -79,6 +79,14 @@ public class AnimalController {
     return animalCatalogService.medicalRecords(id, pageable);
   }
 
+  @GetMapping("/{animalId}/medical-records/{recordId}")
+  public AnimalDtos.MedicalRecordView medicalRecord(
+    @PathVariable UUID animalId,
+    @PathVariable UUID recordId
+  ) {
+    return animalCatalogService.medicalRecord(animalId, recordId);
+  }
+
   @PostMapping("/{id}/medical-records")
   @PreAuthorize("hasRole('ADMIN')")
   public AnimalDtos.MedicalRecordView addMedicalRecord(

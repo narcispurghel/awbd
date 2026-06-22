@@ -90,6 +90,7 @@ public class JwtGatewayFilter extends OncePerRequestFilter {
     return path.startsWith("/api/v1/animals")
       || path.startsWith("/api/v1/shelters")
       || path.startsWith("/api/v1/species")
+      || path.startsWith("/api/v1/tags")
       || path.startsWith("/api/v1/breeds");
   }
 

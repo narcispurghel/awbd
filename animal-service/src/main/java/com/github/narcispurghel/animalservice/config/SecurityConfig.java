@@ -44,6 +44,7 @@ class SecurityConfig {
           .requestMatchers(HttpMethod.GET, "/api/v1/shelters/**").permitAll()
           .requestMatchers(HttpMethod.GET, "/api/v1/species/**").permitAll()
           .requestMatchers(HttpMethod.GET, "/api/v1/breeds/**").permitAll()
+          .requestMatchers(HttpMethod.GET, "/api/v1/tags/**").permitAll()
           .anyRequest().authenticated()
       )
       .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

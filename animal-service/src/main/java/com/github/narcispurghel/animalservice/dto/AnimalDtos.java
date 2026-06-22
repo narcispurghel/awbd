@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 import org.jspecify.annotations.Nullable;
 
@@ -46,6 +47,10 @@ public final class AnimalDtos {
     @NotBlank @Size(max = 80) String name
   ) {}
 
+  public record TagView(UUID id, String name) {}
+
+  public record UpsertTagRequest(@NotBlank @Size(max = 80) String name) {}
+
   public record AnimalSummary(
     UUID id,
     String name,
@@ -56,7 +61,8 @@ public final class AnimalDtos {
     UUID speciesId,
     String speciesName,
     @Nullable UUID breedId,
-    @Nullable String breedName
+    @Nullable String breedName,
+    List<TagView> tags
   ) {}
 
   public record AnimalView(
@@ -75,7 +81,8 @@ public final class AnimalDtos {
     LocalDate intakeDate,
     @Nullable BigDecimal adoptionFee,
     boolean vaccinated,
-    boolean neutered
+    boolean neutered,
+    List<TagView> tags
   ) {}
 
   public record UpsertAnimalRequest(
@@ -90,7 +97,8 @@ public final class AnimalDtos {
     @NotNull LocalDate intakeDate,
     @Nullable @DecimalMin("0.0") BigDecimal adoptionFee,
     boolean vaccinated,
-    boolean neutered
+    boolean neutered,
+    @Nullable List<UUID> tagIds
   ) {}
 
   public record MedicalRecordView(

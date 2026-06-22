@@ -14,3 +14,11 @@ eureka:
     enabled: false
 cors:
   allowed-origins: http://localhost:8090
+storage:
+  s3:
+    endpoint: http://localhost:9000
+    region: us-east-1
+    access-key: test
+    secret-key: test
+    bucket: animal-photos-test
+    bootstrap-enabled: false
